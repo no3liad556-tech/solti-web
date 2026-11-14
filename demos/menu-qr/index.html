@@ -1,0 +1,588 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Menús digitales Soltic</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* Plantilla Soltic · Menú digital con QR.
+   Layout: una columna pensada para el celular; categorías fijas arriba, pedido fijo abajo.
+   Colores del ejemplo: los del completo italiano (palta, tomate, mayo). Cambia estos tokens por los de cada cliente. */
+:root {
+  --brand: #2F6B34;        /* color principal del local (palta) */
+  --brand-ink: #FFFFFF;
+  --accent: #D8432E;       /* destacados (tomate) */
+  --bg: #FFFDF8;           /* fondo (mayo) */
+  --card: #FFFFFF;
+  --fg: #1E2A1F;
+  --muted: #5F6B5F;
+  --line: #E6E2D6;
+  --soft: #EEF4EC;
+  --soft: color-mix(in srgb, var(--brand) 11%, var(--bg));
+  --f-display: "Bricolage Grotesque", "Arial Rounded MT Bold", system-ui, sans-serif;
+  --f-body: "Figtree", "Segoe UI", system-ui, sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --bg: #141A14; --card: #1C241C; --fg: #EEF2EA; --muted: #A9B4A6; --line: #2C382C; --soft: #223022; --soft: color-mix(in srgb, var(--brand) 22%, var(--bg)); color-scheme: dark; }
+}
+:root[data-theme="dark"] { --bg: #141A14; --card: #1C241C; --fg: #EEF2EA; --muted: #A9B4A6; --line: #2C382C; --soft: #223022; --soft: color-mix(in srgb, var(--brand) 22%, var(--bg)); color-scheme: dark; }
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 30; background: var(--bg); }
+.wrap { max-width: 680px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+h1, h2, h3 { margin: 0; font-family: var(--f-display); text-wrap: balance; }
+p { margin: 0; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; border-radius: 8px; }
+
+.demo { background: #0B1F4A; color: #FFFFFF; font-size: 13px; }
+.demo .wrap { display: flex; justify-content: space-between; gap: 12px; padding-block: 8px; flex-wrap: wrap; }
+.demo a { color: #F5C94A; font-weight: 600; text-decoration: none; }
+
+.tipos { background: #13306B; color: #B9C4DD; font-size: 14px; }
+.tipos .wrap { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-block: 8px 10px; }
+#tipos { display: flex; gap: 6px; flex-wrap: wrap; }
+#tipos button { border: 1px solid rgba(255,255,255,.3); background: transparent; color: #FFFFFF; border-radius: 999px; padding: 5px 12px; font-weight: 600; font-size: 13.5px; cursor: pointer; }
+#tipos button[aria-pressed="true"] { background: #F5C94A; color: #0B1F4A; border-color: #F5C94A; }
+header.local .wrap { padding-block: 26px 18px; display: flex; flex-direction: column; gap: 12px; }
+.flag { display: flex; gap: 6px; }
+.flag i { width: 26px; height: 6px; border-radius: 3px; }
+.local h1 { font-size: clamp(34px, 9vw, 46px); font-weight: 800; letter-spacing: -.02em; line-height: 1; }
+.local .tag { color: var(--muted); font-size: 16px; }
+.info { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 7px; font-size: 14px; font-weight: 600; padding: 6px 12px; border-radius: 999px; background: var(--soft); color: var(--fg); }
+.chip .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--brand); }
+.chip.closed .dot { background: var(--accent); }
+.chip.plain { background: transparent; border: 1px solid var(--line); font-weight: 500; color: var(--muted); }
+
+.search { position: relative; }
+.search input { width: 100%; font: 16px var(--f-body); color: var(--fg); background: var(--card); border: 1.5px solid var(--line); border-radius: 14px; padding: 12px 14px 12px 42px; }
+.search svg { position: absolute; left: 14px; top: 50%; width: 18px; height: 18px; transform: translateY(-50%); stroke: var(--muted); fill: none; stroke-width: 2; }
+
+.cats { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); }
+.cats .scroll { overflow-x: auto; scrollbar-width: none; }
+.cats .scroll::-webkit-scrollbar { display: none; }
+.cats nav { display: flex; gap: 8px; padding-block: 10px; width: max-content; }
+.cats a { text-decoration: none; font-weight: 600; font-size: 15px; padding: 8px 14px; border-radius: 999px; color: var(--muted); white-space: nowrap; }
+.cats a.on { background: var(--brand); color: var(--brand-ink); }
+
+main .wrap { padding-block: 10px 140px; display: flex; flex-direction: column; gap: 30px; }
+section.cat { scroll-margin-top: 70px; display: flex; flex-direction: column; gap: 4px; }
+section.cat h2 { font-size: 26px; font-weight: 800; display: flex; align-items: baseline; gap: 10px; padding-block: 8px 6px; }
+section.cat h2 small { font: 500 14px var(--f-body); color: var(--muted); }
+.item { display: grid; grid-template-columns: 1fr auto; gap: 6px 16px; padding: 16px 0; border-bottom: 1px dashed var(--line); }
+.item:last-child { border-bottom: 0; }
+.item .txt { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.item h3 { font: 700 17px var(--f-body); }
+.item p { color: var(--muted); font-size: 14.5px; }
+.badges { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 2px; }
+.b { font-size: 12px; font-weight: 700; letter-spacing: .02em; padding: 2px 8px; border-radius: 6px; }
+.b-reco { background: var(--accent); color: #FFFFFF; }
+.b-veg { background: var(--soft); color: var(--brand); }
+.b-pic { background: #FDE8E4; color: #A4301F; }
+.b-new { background: #FFF1C9; color: #7A5A00; }
+.side { display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
+.price { font: 800 18px var(--f-display); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.add { border: 0; background: var(--brand); color: var(--brand-ink); font-weight: 700; font-size: 14px; border-radius: 999px; padding: 7px 14px; cursor: pointer; }
+.step { display: inline-flex; align-items: center; gap: 4px; background: var(--soft); border-radius: 999px; padding: 3px; }
+.step button { width: 30px; height: 30px; border: 0; border-radius: 50%; background: var(--card); font-weight: 800; font-size: 17px; cursor: pointer; color: var(--brand); }
+.step span { min-width: 22px; text-align: center; font-weight: 700; font-variant-numeric: tabular-nums; }
+.out { font-size: 13px; font-weight: 700; color: var(--accent); }
+.item.agotado h3, .item.agotado .price { opacity: .5; }
+.none { color: var(--muted); padding: 20px 0; }
+
+.cartbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 25; padding: 12px max(16px, env(safe-area-inset-right, 0px)) calc(12px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); background: linear-gradient(transparent, var(--bg) 30%); }
+.cartbar button { display: flex; justify-content: space-between; align-items: center; width: 100%; max-width: 648px; margin: 0 auto; border: 0; border-radius: 16px; background: var(--fg); color: var(--bg); padding: 15px 20px; font-weight: 700; font-size: 16px; cursor: pointer; box-shadow: 0 10px 24px rgba(0,0,0,.2); }
+.cartbar .count { background: var(--accent); color: #FFFFFF; border-radius: 999px; padding: 1px 9px; margin-right: 8px; }
+
+.sheet { position: fixed; inset: 0; z-index: 40; background: rgba(10,15,10,.45); display: flex; align-items: flex-end; justify-content: center; }
+.panel { background: var(--card); width: 100%; max-width: 680px; max-height: 88%; overflow-y: auto; border-radius: 22px 22px 0 0; padding: 22px max(18px, env(safe-area-inset-right, 0px)) calc(22px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 16px; }
+.panel-head { display: flex; justify-content: space-between; align-items: center; }
+.panel h2 { font-size: 24px; }
+.x { border: 0; background: var(--soft); width: 36px; height: 36px; border-radius: 50%; font-size: 20px; cursor: pointer; }
+.lines { display: flex; flex-direction: column; }
+.line { display: flex; justify-content: space-between; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.line span:last-child { font-variant-numeric: tabular-nums; font-weight: 600; white-space: nowrap; }
+.total { display: flex; justify-content: space-between; font: 800 20px var(--f-display); font-variant-numeric: tabular-nums; }
+.seg { display: flex; gap: 8px; }
+.seg label { flex: 1; }
+.seg input { position: absolute; opacity: 0; }
+.seg span { display: block; text-align: center; padding: 11px; border-radius: 12px; border: 1.5px solid var(--line); font-weight: 600; cursor: pointer; }
+.seg input:checked + span { border-color: var(--brand); background: var(--soft); color: var(--brand); }
+.seg input:focus-visible + span { outline: 3px solid var(--accent); outline-offset: 2px; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-weight: 600; font-size: 14.5px; }
+.field input, .field textarea { font: 16px var(--f-body); color: var(--fg); background: var(--bg); border: 1.5px solid var(--line); border-radius: 12px; padding: 11px 13px; width: 100%; }
+.send { display: flex; justify-content: center; align-items: center; gap: 10px; text-decoration: none; background: #1FA855; color: #FFFFFF; font-weight: 700; font-size: 17px; border-radius: 16px; padding: 15px; }
+.send svg { width: 22px; height: 22px; fill: #FFFFFF; }
+.hint { font-size: 13px; color: var(--muted); text-align: center; }
+
+footer { border-top: 1px solid var(--line); }
+footer .wrap { padding-block: 22px 120px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; color: var(--muted); }
+footer a { color: var(--fg); font-weight: 700; }
+
+/* Fotos */
+.thumb { width: 88px; height: 88px; border-radius: 16px; overflow: hidden; flex: none; background: var(--soft); }
+.thumb svg, .thumb img { width: 100%; height: 100%; display: block; object-fit: cover; }
+.item { grid-template-columns: 88px 1fr !important; align-items: start; }
+.item .bottom { display: flex; justify-content: space-between; align-items: center; gap: 10px; margin-top: 6px; }
+.item.agotado .thumb { filter: grayscale(1); opacity: .55; }
+.feat { display: flex; flex-direction: column; gap: 12px; }
+.feat h2 { font-size: 22px; font-weight: 800; }
+.feat .scroll { overflow-x: auto; scrollbar-width: none; margin-inline: -4px; padding: 0 4px 6px; }
+.feat .scroll::-webkit-scrollbar { display: none; }
+.feat .row { display: flex; gap: 14px; width: max-content; }
+.fcard { width: 200px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; overflow: hidden; display: flex; flex-direction: column; }
+.fcard .pic { height: 140px; background: var(--soft); }
+.fcard .pic svg { width: 100%; height: 100%; display: block; }
+.fcard .body { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+.fcard h3 { font: 700 16px var(--f-body); }
+.fcard .bottom { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.fcard .price { font-size: 17px; }
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+
+<div class="demo"><div class="wrap"><span>Demo · Menú digital de Soltic</span><a href="/">Hecho por Soltic</a></div></div>
+
+<div class="tipos"><div class="wrap"><span>Ver ejemplo:</span><div id="tipos" role="group" aria-label="Tipo de negocio"></div></div></div>
+
+<header class="local">
+  <div class="wrap">
+    <div class="flag" aria-hidden="true"><i style="background:var(--brand)"></i><i style="background:var(--line)"></i><i style="background:var(--accent)"></i></div>
+    <h1 id="r-nombre">La Picá del Barrio</h1>
+    <p class="tag" id="r-tag"></p>
+    <div class="info">
+      <span class="chip" id="r-estado"><span class="dot"></span><span></span></span>
+      <span class="chip plain" id="r-dir"></span>
+    </div>
+    <div class="search">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>
+      <label for="q" class="sr" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Buscar en el menú</label>
+      <input id="q" type="search" placeholder="Buscar en el menú… ej: italiano" autocomplete="off">
+    </div>
+  </div>
+</header>
+
+<div class="cats"><div class="wrap"><div class="scroll"><nav id="cats" aria-label="Categorías"></nav></div></div></div>
+
+<main><div class="wrap" id="menu"></div></main>
+
+<footer><div class="wrap">
+  <span id="r-horario"></span>
+  <span>Precios en pesos chilenos, IVA incluido.</span>
+  <span id="r-aviso" hidden></span>
+  <span>Menú digital por <a href="https://soltic.cl" target="_blank" rel="noopener">Soltic</a> · Ordena, automatiza, crece.</span>
+</div></footer>
+
+<div class="cartbar" id="cartbar" hidden><button type="button" id="open-cart"><span><span class="count" id="c-count">0</span>Ver mi pedido</span><span id="c-total">$0</span></button></div>
+
+<div class="sheet" id="sheet" hidden>
+  <div class="panel" role="dialog" aria-modal="true" aria-labelledby="p-title">
+    <div class="panel-head"><h2 id="p-title">Mi pedido</h2><button class="x" type="button" id="close-cart" aria-label="Cerrar">×</button></div>
+    <div class="lines" id="lines"></div>
+    <div class="total"><span>Total</span><span id="p-total">$0</span></div>
+    <div class="seg" role="radiogroup" aria-label="Tipo de pedido">
+      <label><input type="radio" name="tipo" id="t-mesa" value="mesa" checked><span>En la mesa</span></label>
+      <label><input type="radio" name="tipo" id="t-llevar" value="llevar"><span>Para llevar</span></label>
+    </div>
+    <div class="field" id="f-mesa"><label for="mesa">Número de mesa</label><input id="mesa" inputmode="numeric" placeholder="Ej: 4"></div>
+    <div class="field"><label for="nota">Comentario <span style="font-weight:400;color:var(--muted)">(opcional)</span></label><textarea id="nota" rows="2" placeholder="Ej: sin mayo, por favor"></textarea></div>
+    <a class="send" id="send" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38a9.87 9.87 0 0 0 4.74 1.21c5.46 0 9.91-4.45 9.91-9.91S17.5 2 12.04 2zm5.8 14.06c-.24.68-1.42 1.31-1.95 1.36-.5.05-.97.23-3.28-.68-2.78-1.1-4.55-3.94-4.69-4.12-.13-.18-1.11-1.48-1.11-2.83s.71-2 .96-2.28c.25-.27.55-.34.73-.34l.52.01c.17.01.39-.06.61.47.24.56.79 1.93.86 2.07.07.14.11.3.02.48-.09.18-.14.3-.27.46-.14.16-.29.36-.41.48-.14.14-.28.29-.12.56.16.27.71 1.17 1.52 1.9 1.05.93 1.93 1.22 2.2 1.36.27.14.43.11.59-.07.16-.18.68-.79.86-1.07.18-.27.36-.23.61-.14.25.09 1.59.75 1.86.89.27.14.45.2.52.32.07.11.07.66-.17 1.33z"/></svg>Enviar pedido por WhatsApp</a>
+    <p class="hint">Se abrirá WhatsApp con tu pedido listo para enviar.</p>
+  </div>
+</div>
+
+<script>
+/* ===================== DEMOS (en la versión de un cliente queda solo su local) ===================== */
+// foto: 'https://...' usa la foto real del plato; si no hay, se usa la ilustración indicada en img.
+// Etiquetas: reco = Recomendado, veg = Vegetariano, pic = Picante, new = Nuevo. agotado: true lo marca sin stock.
+// horario: 0 = domingo ... 6 = sábado. [abre, cierra] en 24 h. null = cerrado.
+var DEMOS = {
+  sangucheria: {
+    boton: 'Sanguchería',
+    colores: { brand: '#2F6B34', accent: '#D8432E' },
+    local: {
+      nombre: 'La Picá del Barrio', descripcion: 'Sanguchería y fuente de soda de ejemplo', direccion: 'Av. Ejemplo 1234, Santiago', whatsapp: '56973020975',
+      horario: { 0: ['12:00', '18:00'], 1: null, 2: ['12:00', '23:00'], 3: ['12:00', '23:00'], 4: ['12:00', '23:00'], 5: ['12:00', '00:30'], 6: ['12:00', '00:30'] },
+      horarioTexto: 'Martes a jueves 12:00–23:00 · Viernes y sábado 12:00–00:30 · Domingo 12:00–18:00 · Lunes cerrado'
+    },
+    menu: [
+      { cat: 'Sánguches', items: [
+        { img: 'completo', n: 'Completo italiano', d: 'Vienesa, palta, tomate y mayo casera en pan de completo.', p: 2900, t: ['reco'] },
+        { img: 'churrasco', n: 'Churrasco palta', d: 'Lomo laminado, palta y mayo en pan frica.', p: 6200 },
+        { img: 'chacarero', n: 'Chacarero', d: 'Lomo, porotos verdes, tomate y ají verde.', p: 6500, t: ['pic'] },
+        { img: 'barros', n: 'Barros Luco', d: 'Lomo laminado y queso fundido en pan amasado.', p: 5900 },
+        { img: 'vegetal', n: 'Italiano vegetal', d: 'Hamburguesa de garbanzo, palta, tomate y mayo vegana.', p: 5400, t: ['veg', 'new'] }
+      ]},
+      { cat: 'Platos', items: [
+        { img: 'pobre', n: 'Lomo a lo pobre', d: 'Lomo, papas fritas, cebolla caramelizada y dos huevos.', p: 9800, t: ['reco'] },
+        { img: 'pastel', n: 'Pastel de choclo', d: 'Pino de carne, pollo, aceituna y huevo. Solo en temporada.', p: 8900, agotado: true },
+        { img: 'cazuela', n: 'Cazuela de vacuno', d: 'Con zapallo, papa, choclo y arroz.', p: 7500 }
+      ]},
+      { cat: 'Para compartir', items: [
+        { img: 'chorrillana', n: 'Chorrillana para 2', d: 'Papas fritas, carne, cebolla y huevo frito.', p: 12900 },
+        { img: 'empanadas', n: 'Empanadas de queso', d: 'Seis empanaditas fritas con pebre.', p: 5500, t: ['veg'] }
+      ]},
+      { cat: 'Bebidas', items: [
+        { img: 'jugo', n: 'Jugo natural', d: 'Frutilla, piña o mango, 500 ml.', p: 2800 },
+        { img: 'mote', n: 'Mote con huesillo', d: 'Bien helado, de la casa.', p: 2500, t: ['reco'] },
+        { img: 'lata', n: 'Bebida en lata', d: '350 ml.', p: 1600 },
+        { img: 'cafe', n: 'Café de grano', d: 'Americano o cortado.', p: 2200 }
+      ]},
+      { cat: 'Postres', items: [
+        { img: 'kuchen', n: 'Kuchen de nuez', d: 'Porción casera.', p: 3200 },
+        { img: 'leche', n: 'Leche asada', d: 'Receta de la abuela.', p: 2900, t: ['veg'] }
+      ]}
+    ]
+  },
+  heladeria: {
+    boton: 'Heladería',
+    colores: { brand: '#C2386B', accent: '#1E9C82' },
+    local: {
+      nombre: 'Gelato del Cerro', descripcion: 'Heladería artesanal de ejemplo', direccion: 'Calle Ejemplo 567, Valparaíso', whatsapp: '56973020975',
+      horario: { 0: ['12:00', '21:00'], 1: ['13:00', '21:00'], 2: ['13:00', '21:00'], 3: ['13:00', '21:00'], 4: ['13:00', '22:00'], 5: ['12:00', '23:00'], 6: ['12:00', '23:00'] },
+      horarioTexto: 'Lunes a jueves 13:00–21:00 · Viernes y sábado 12:00–23:00 · Domingo 12:00–21:00'
+    },
+    menu: [
+      { cat: 'Helados', items: [
+        { img: 'cono1', n: 'Cono 1 sabor', d: 'Elige entre lúcuma, frutilla, chocolate, menta chip o manjar.', p: 2500 },
+        { img: 'cono2', n: 'Cono 2 sabores', d: 'Dos bolas en cono de barquillo.', p: 3600, t: ['reco'] },
+        { img: 'copa', n: 'Copa 3 sabores', d: 'Tres bolas con salsa y galleta.', p: 4800 },
+        { img: 'vegano', n: 'Sorbete de mango', d: 'Sin lácteos, hecho con fruta natural.', p: 2700, t: ['veg', 'new'] }
+      ]},
+      { cat: 'Especiales', items: [
+        { img: 'sundae', n: 'Sundae de manjar', d: 'Vainilla, manjar, crema y nueces.', p: 4900, t: ['reco'] },
+        { img: 'banana', n: 'Banana split', d: 'Plátano, tres sabores, crema y salsa de chocolate.', p: 5900 },
+        { img: 'waffle', n: 'Waffle con helado', d: 'Waffle tibio con dos bolas y frutillas.', p: 5600 }
+      ]},
+      { cat: 'Paletas', items: [
+        { img: 'paletaf', n: 'Paleta de frambuesa', d: 'De agua, con fruta natural.', p: 1900, t: ['veg'] },
+        { img: 'paletac', n: 'Paleta chocolate bañada', d: 'Crema con cobertura de chocolate.', p: 2300 },
+        { img: 'paletal', n: 'Paleta de limón', d: 'Refrescante, de agua.', p: 1800, agotado: true }
+      ]},
+      { cat: 'Bebidas', items: [
+        { img: 'milkshake', n: 'Milkshake de lúcuma', d: 'Batido con helado de lúcuma y crema.', p: 3900, t: ['reco'] },
+        { img: 'frappe', n: 'Frappé de café', d: 'Café helado batido con crema.', p: 3700 },
+        { img: 'lata', n: 'Bebida en lata', d: '350 ml.', p: 1600 }
+      ]}
+    ]
+  },
+  cafeteria: {
+    boton: 'Cafetería',
+    colores: { brand: '#6B4226', accent: '#D9772E' },
+    local: {
+      nombre: 'Café Grano Norte', descripcion: 'Cafetería de especialidad de ejemplo', direccion: 'Pasaje Ejemplo 89, Concepción', whatsapp: '56973020975',
+      horario: { 0: null, 1: ['08:00', '20:00'], 2: ['08:00', '20:00'], 3: ['08:00', '20:00'], 4: ['08:00', '20:00'], 5: ['08:00', '21:00'], 6: ['09:00', '19:00'] },
+      horarioTexto: 'Lunes a jueves 08:00–20:00 · Viernes 08:00–21:00 · Sábado 09:00–19:00 · Domingo cerrado'
+    },
+    menu: [
+      { cat: 'Cafés', items: [
+        { img: 'espresso', n: 'Espresso', d: 'Grano de especialidad, tostado medio.', p: 1900 },
+        { img: 'cortado', n: 'Cortado', d: 'Espresso con un toque de leche.', p: 2300 },
+        { img: 'latte', n: 'Latte', d: 'Espresso y leche vaporizada, 12 oz.', p: 2900, t: ['reco'] },
+        { img: 'capuccino', n: 'Capuccino', d: 'Con espuma y canela.', p: 2900 },
+        { img: 'mokka', n: 'Mokaccino', d: 'Café, chocolate y crema.', p: 3300, t: ['new'] }
+      ]},
+      { cat: 'Té e infusiones', items: [
+        { img: 'te', n: 'Té en hojas', d: 'Negro, verde o rooibos.', p: 2000 },
+        { img: 'matcha', n: 'Matcha latte', d: 'Matcha japonés con leche vegetal.', p: 3400, t: ['veg'] }
+      ]},
+      { cat: 'Pastelería', items: [
+        { img: 'croissant', n: 'Croissant de mantequilla', d: 'Horneado cada mañana.', p: 2200, t: ['reco'] },
+        { img: 'milhojas', n: 'Torta mil hojas', d: 'Hojarasca, manjar y nuez. Porción.', p: 3600, t: ['reco'] },
+        { img: 'brownie', n: 'Brownie', d: 'Chocolate semiamargo y nueces.', p: 2400 },
+        { img: 'cheesecake', n: 'Cheesecake de frambuesa', d: 'Porción.', p: 3500, agotado: true }
+      ]},
+      { cat: 'Salados', items: [
+        { img: 'avepalta', n: 'Sándwich ave palta', d: 'Pollo, palta y mayo en pan de molde.', p: 4500 },
+        { img: 'tostadas', n: 'Tostadas con palta', d: 'Pan de masa madre, palta y semillas.', p: 3900, t: ['veg'] }
+      ]}
+    ]
+  },
+  bar: {
+    boton: 'Bar',
+    colores: { brand: '#7A2E3A', accent: '#D9961A' },
+    local: {
+      nombre: 'Bar El Muelle', descripcion: 'Bar y picoteo de ejemplo', direccion: 'Av. Ejemplo 2020, Viña del Mar', whatsapp: '56973020975',
+      horario: { 0: null, 1: null, 2: ['18:00', '01:00'], 3: ['18:00', '01:00'], 4: ['18:00', '02:00'], 5: ['18:00', '03:00'], 6: ['18:00', '03:00'] },
+      horarioTexto: 'Martes y miércoles 18:00–01:00 · Jueves 18:00–02:00 · Viernes y sábado 18:00–03:00 · Happy hour de martes a jueves, 18:00 a 21:00',
+      aviso: 'Venta de alcohol solo a mayores de 18 años. Si bebes, no manejes.'
+    },
+    menu: [
+      { cat: 'Cócteles', items: [
+        { img: 'piscosour', n: 'Pisco sour', d: 'Pisco, limón de pica, clara y amargo de angostura.', p: 4900, t: ['reco'] },
+        { img: 'piscola', n: 'Piscola', d: 'Pisco 35° con bebida cola y mucho hielo.', p: 4500 },
+        { img: 'mojito', n: 'Mojito', d: 'Ron blanco, menta, limón y soda.', p: 5200 },
+        { img: 'terremoto', n: 'Terremoto', d: 'Pipeño, helado de piña y granadina.', p: 4800, t: ['reco'] },
+        { img: 'spritz', n: 'Spritz', d: 'Aperitivo, espumante y soda.', p: 5900, t: ['new'] }
+      ]},
+      { cat: 'Cervezas', items: [
+        { img: 'schop', n: 'Schop 500 cc', d: 'Lager de barril bien helada.', p: 3500 },
+        { img: 'ipa', n: 'Cerveza artesanal IPA', d: 'Cervecería local, 470 cc.', p: 4500 },
+        { img: 'sinalcohol', n: 'Cerveza sin alcohol', d: 'Botella 330 cc.', p: 2900 }
+      ]},
+      { cat: 'Vinos', items: [
+        { img: 'copavino', n: 'Copa de carmenere', d: 'Valle del Colchagua.', p: 3900 },
+        { img: 'botella', n: 'Botella de sauvignon blanc', d: 'Valle de Casablanca, 750 ml.', p: 15900 }
+      ]},
+      { cat: 'Picoteo', items: [
+        { img: 'tabla', n: 'Tabla de quesos y carnes', d: 'Para 2 o 3 personas, con aceitunas y pan.', p: 13900, t: ['reco'] },
+        { img: 'chorrillana', n: 'Chorrillana para compartir', d: 'Papas fritas, carne, cebolla y huevo frito.', p: 12900 },
+        { img: 'papas', n: 'Papas fritas con salsas', d: 'Porción grande con ketchup, mayo y ají.', p: 5500, t: ['veg'] },
+        { img: 'empanadas', n: 'Empanaditas de queso', d: 'Doce unidades con pebre.', p: 7900, agotado: true }
+      ]},
+      { cat: 'Sin alcohol', items: [
+        { img: 'limonada', n: 'Limonada menta jengibre', d: 'Natural, 500 ml.', p: 3200, t: ['veg'] },
+        { img: 'lata', n: 'Bebida en lata', d: '350 ml.', p: 1800 }
+      ]}
+    ]
+  }
+};
+/* =============================================================================================== */
+
+var LOCAL, MENU;
+
+
+
+/* Ilustraciones de ejemplo (se reemplazan por fotos reales con la propiedad foto) */
+var BUN = '#E2A85A', BUN_D = '#B97B32', MEAT = '#7A3E22', PALTA = '#6FAE4A', TOM = '#E0442E', MAYO = '#FFF7E3';
+function bg(c) { return '<rect width="120" height="120" fill="' + c + '"/>'; }
+function plate(c) { return '<ellipse cx="60" cy="66" rx="50" ry="40" fill="#FFFFFF"/><ellipse cx="60" cy="66" rx="40" ry="31" fill="' + (c || '#F4F1EA') + '"/>'; }
+function sandwich(layers) {
+  var y = 64, out = '<path d="M14 84 Q60 98 106 84 L106 78 Q60 88 14 78Z" fill="' + BUN_D + '"/><rect x="14" y="72" width="92" height="10" rx="5" fill="' + BUN + '"/>';
+  layers.slice().reverse().forEach(function (l) { out += '<path d="M10 ' + (y + 8) + ' Q35 ' + (y - 2) + ' 60 ' + (y + 6) + ' T110 ' + (y + 6) + ' L110 ' + (y + 12) + ' L10 ' + (y + 12) + 'Z" fill="' + l + '"/>'; y -= 9; });
+  out += '<path d="M14 ' + (y + 12) + ' Q14 ' + (y - 18) + ' 60 ' + (y - 20) + ' Q106 ' + (y - 18) + ' 106 ' + (y + 12) + 'Z" fill="' + BUN + '"/>';
+  out += '<g fill="#F6D9A6"><ellipse cx="44" cy="' + (y - 6) + '" rx="3" ry="1.6"/><ellipse cx="62" cy="' + (y - 10) + '" rx="3" ry="1.6"/><ellipse cx="78" cy="' + (y - 4) + '" rx="3" ry="1.6"/></g>';
+  return out;
+}
+var ART = {
+  completo: bg('#FCE6D2') + '<rect x="10" y="62" width="100" height="26" rx="13" fill="' + BUN_D + '"/><rect x="12" y="56" width="96" height="24" rx="12" fill="' + BUN + '"/><rect x="8" y="50" width="104" height="13" rx="6.5" fill="#B5462B"/><path d="M14 52 h92 v6 q-46 8 -92 0z" fill="' + PALTA + '"/><g fill="' + TOM + '"><circle cx="24" cy="48" r="5"/><circle cx="40" cy="47" r="5"/><circle cx="56" cy="48" r="5"/><circle cx="72" cy="47" r="5"/><circle cx="88" cy="48" r="5"/><circle cx="100" cy="49" r="4"/></g><path d="M16 44 q8 -6 16 0 t16 0 t16 0 t16 0 t16 0 t12 0" stroke="' + MAYO + '" stroke-width="5" fill="none" stroke-linecap="round"/>',
+  churrasco: bg('#E8F1E2') + sandwich([MEAT, PALTA, MAYO]),
+  chacarero: bg('#EAF2E0') + sandwich([MEAT, '#5E9B3C', TOM]) + '<g fill="#3E7B2A"><rect x="30" y="58" width="16" height="4" rx="2"/><rect x="66" y="56" width="18" height="4" rx="2"/></g>',
+  barros: bg('#FFF1D6') + sandwich([MEAT, '#F4C542']) + '<path d="M30 60 q4 10 0 14 M84 60 q4 12 1 15" stroke="#F4C542" stroke-width="5" stroke-linecap="round" fill="none"/>',
+  vegetal: bg('#E4F2E4') + sandwich(['#C08A4E', PALTA, TOM, MAYO]),
+  pobre: bg('#F7E9DC') + plate() + '<path d="M26 66 q10 -20 34 -14 q16 4 10 18 q-8 14 -30 10 q-18 -3 -14 -14z" fill="' + MEAT + '"/><g fill="#F2C14E"><rect x="70" y="70" width="26" height="6" rx="3" transform="rotate(-20 83 73)"/><rect x="66" y="80" width="28" height="6" rx="3" transform="rotate(10 80 83)"/><rect x="74" y="88" width="22" height="6" rx="3" transform="rotate(-8 85 91)"/><rect x="58" y="90" width="20" height="6" rx="3" transform="rotate(25 68 93)"/></g><path d="M62 44 q14 -8 26 2 q6 10 -6 14 q-14 4 -20 -4 q-4 -6 0 -12z" fill="#FFFFFF" stroke="#EDE7DA"/><circle cx="74" cy="52" r="6" fill="#F7B21B"/><path d="M84 58 q10 -4 14 6 q0 10 -10 8 q-10 -2 -4 -14z" fill="#FFFFFF" stroke="#EDE7DA"/><circle cx="90" cy="64" r="4.5" fill="#F7B21B"/>',
+  pastel: bg('#F7E6D6') + '<ellipse cx="60" cy="84" rx="46" ry="16" fill="#8E3F1F"/><path d="M14 64 h92 v18 q-46 20 -92 0z" fill="#A9502A"/><ellipse cx="60" cy="64" rx="46" ry="16" fill="#B5562F"/><ellipse cx="60" cy="63" rx="40" ry="12" fill="#F2C94C"/><g fill="#C98A2E"><ellipse cx="44" cy="60" rx="6" ry="2.5"/><ellipse cx="66" cy="66" rx="7" ry="2.5"/><ellipse cx="78" cy="59" rx="5" ry="2"/><ellipse cx="52" cy="68" rx="4" ry="1.6"/></g>',
+  cazuela: bg('#FBE9DA') + '<ellipse cx="60" cy="70" rx="50" ry="34" fill="#FFFFFF"/><ellipse cx="60" cy="66" rx="40" ry="24" fill="#E79A3C"/><rect x="44" y="52" width="16" height="26" rx="8" fill="#F4C542" transform="rotate(-25 52 65)"/><g fill="#D8A44A"><circle cx="49" cy="58" r="1.4"/><circle cx="52" cy="64" r="1.4"/><circle cx="55" cy="70" r="1.4"/></g><path d="M68 58 q8 -6 14 2 q-2 10 -12 8z" fill="#F08A2A"/><ellipse cx="78" cy="74" rx="9" ry="6" fill="#F3E2B8"/><g fill="#4C8B2B"><circle cx="40" cy="74" r="2"/><circle cx="62" cy="76" r="2"/><circle cx="86" cy="62" r="2"/></g>',
+  chorrillana: bg('#FBEFD9') + plate('#F6EEDC') + '<g fill="#F2C14E"><rect x="30" y="58" width="30" height="6" rx="3" transform="rotate(-25 45 61)"/><rect x="50" y="52" width="30" height="6" rx="3" transform="rotate(15 65 55)"/><rect x="62" y="68" width="30" height="6" rx="3" transform="rotate(-10 77 71)"/><rect x="34" y="72" width="28" height="6" rx="3" transform="rotate(20 48 75)"/><rect x="46" y="82" width="28" height="6" rx="3" transform="rotate(-5 60 85)"/></g><g fill="' + MEAT + '"><rect x="40" y="62" width="16" height="7" rx="3"/><rect x="66" y="58" width="14" height="7" rx="3"/><rect x="58" y="76" width="16" height="7" rx="3"/></g><g stroke="#E9D6B5" stroke-width="3" fill="none" stroke-linecap="round"><path d="M38 80 q6 -6 12 0"/><path d="M70 82 q6 -6 12 0"/></g><path d="M48 40 q14 -8 26 0 q8 10 -4 16 q-14 4 -22 -4 q-4 -6 0 -12z" fill="#FFFFFF" stroke="#EDE7DA"/><circle cx="61" cy="47" r="6.5" fill="#F7B21B"/>',
+  empanadas: bg('#FCEBD6') + '<path d="M12 84 a30 30 0 0 1 60 0z" fill="#E3A24F"/><path d="M48 92 a30 30 0 0 1 60 0z" fill="#D9913C"/><g fill="#C27A2C"><circle cx="16" cy="84" r="3"/><circle cx="24" cy="84" r="3"/><circle cx="32" cy="84" r="3"/><circle cx="40" cy="84" r="3"/><circle cx="48" cy="84" r="3"/><circle cx="56" cy="84" r="3"/><circle cx="64" cy="84" r="3"/><circle cx="52" cy="92" r="3"/><circle cx="60" cy="92" r="3"/><circle cx="68" cy="92" r="3"/><circle cx="76" cy="92" r="3"/><circle cx="84" cy="92" r="3"/><circle cx="92" cy="92" r="3"/><circle cx="100" cy="92" r="3"/></g><path d="M74 30 q6 6 0 12 q-6 6 0 12" stroke="#F2D5AE" stroke-width="3" fill="none" stroke-linecap="round"/>',
+  jugo: bg('#FDE3E3') + '<path d="M40 30 h40 l-6 72 h-28z" fill="#FFFFFF" opacity=".7"/><path d="M42 46 h36 l-4.6 54 h-26.8z" fill="#E8485A"/><rect x="62" y="16" width="5" height="50" rx="2.5" fill="#2F6B34" transform="rotate(12 64 40)"/><circle cx="50" cy="60" r="3" fill="#F7A3AD"/><circle cx="66" cy="74" r="2.5" fill="#F7A3AD"/>',
+  mote: bg('#FFF0DC') + '<path d="M36 26 h48 l-7 78 h-34z" fill="#FFFFFF" opacity=".7"/><path d="M38 40 h44 l-5.8 62 h-32.4z" fill="#D98A2B"/><g fill="#FFF3DA"><circle cx="48" cy="86" r="3"/><circle cx="56" cy="90" r="3"/><circle cx="64" cy="86" r="3"/><circle cx="72" cy="90" r="3"/><circle cx="52" cy="94" r="3"/><circle cx="62" cy="96" r="3"/><circle cx="68" cy="94" r="3"/></g><circle cx="60" cy="62" r="11" fill="#F4A13A"/><circle cx="57" cy="59" r="3" fill="#FBC97A"/>',
+  lata: bg('#E6ECF7') + '<rect x="40" y="24" width="40" height="76" rx="8" fill="#C6202E"/><rect x="42" y="20" width="36" height="8" rx="4" fill="#B9BEC9"/><rect x="40" y="48" width="40" height="18" fill="#FFFFFF"/><path d="M46 57 q7 -6 14 0 t14 0" stroke="#C6202E" stroke-width="3" fill="none"/>',
+  cafe: bg('#EFE4DA') + '<ellipse cx="60" cy="90" rx="42" ry="10" fill="#FFFFFF"/><path d="M32 52 h52 v20 a26 22 0 0 1 -52 0z" fill="#FFFFFF"/><path d="M84 58 a10 10 0 0 1 0 18" stroke="#FFFFFF" stroke-width="6" fill="none"/><ellipse cx="58" cy="52" rx="26" ry="6" fill="#6B3E1E"/><path d="M48 40 q-4 -8 2 -14 M62 40 q-4 -8 2 -14" stroke="#B9A08A" stroke-width="3" fill="none" stroke-linecap="round"/>',
+  kuchen: bg('#F8EAD8') + '<path d="M18 82 L92 58 L104 82 Z" fill="#E9B76A"/><path d="M18 82 L104 82 L104 96 L18 96Z" fill="#D69A4C"/><path d="M18 82 L92 58 L104 82" fill="none" stroke="#B97B32" stroke-width="3"/><g fill="#8A5A2B"><ellipse cx="50" cy="76" rx="5" ry="3"/><ellipse cx="68" cy="70" rx="5" ry="3"/><ellipse cx="86" cy="72" rx="5" ry="3"/><ellipse cx="74" cy="78" rx="4" ry="2.5"/></g>',
+  leche: bg('#FBEFD8') + '<ellipse cx="60" cy="90" rx="44" ry="10" fill="#FFFFFF"/><path d="M28 86 L36 50 h48 l8 36z" fill="#F6DFA4"/><ellipse cx="60" cy="50" rx="24" ry="6" fill="#B8742C"/><path d="M36 50 q4 10 2 18 M84 50 q-2 12 1 16" stroke="#B8742C" stroke-width="4" fill="none" stroke-linecap="round"/>'
+};
+
+/* Ilustraciones extra: heladería y cafetería */
+var SCOOP = { lucuma: '#E9A84C', frutilla: '#F27A9A', choco: '#7A4528', menta: '#9ADBC2', manjar: '#C98A4B', vainilla: '#FBEBC4', mango: '#F7B733' };
+function scoop(x, y, r, c) { return '<circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="' + c + '"/><path d="M' + (x - r) + ' ' + (y + 2) + ' q' + (r / 2) + ' ' + (r / 2) + ' ' + r + ' 0 t' + r + ' 0" fill="' + c + '"/><circle cx="' + (x - r / 3) + '" cy="' + (y - r / 3) + '" r="' + (r / 4) + '" fill="#FFFFFF" opacity=".35"/>'; }
+function cone(scoops) {
+  var o = '<path d="M40 62 L60 108 L80 62Z" fill="#E2A85A"/><path d="M46 70 l22 0 M50 80 l17 0 M54 90 l10 0 M46 66 l18 30 M74 66 l-18 30" stroke="#B97B32" stroke-width="2"/>';
+  scoops.forEach(function (c, i) { o += scoop(60, 56 - i * 20, 20, c); });
+  return o;
+}
+function cupDesk(liquid, art, extra) {
+  return '<ellipse cx="60" cy="92" rx="44" ry="10" fill="#FFFFFF"/><path d="M30 50 h56 v18 a28 24 0 0 1 -56 0z" fill="#FFFFFF"/><path d="M86 56 a10 10 0 0 1 0 18" stroke="#FFFFFF" stroke-width="6" fill="none"/><ellipse cx="58" cy="50" rx="28" ry="7" fill="' + liquid + '"/>' + (art ? '<path d="M50 50 q8 -6 16 0 q-8 5 -16 0z" fill="#F7E6CF"/><path d="M58 47 v6" stroke="' + liquid + '" stroke-width="1.5"/>' : '') + (extra || '');
+}
+function tallGlass(c, top) { return '<path d="M38 28 h44 l-6 74 h-32z" fill="#FFFFFF" opacity=".7"/><path d="M40 44 h40 l-4.7 58 h-30.6z" fill="' + c + '"/>' + (top || ''); }
+function paleta(c, coat) { return '<rect x="56" y="76" width="8" height="34" rx="4" fill="#E2C08A"/><rect x="40" y="18" width="40" height="64" rx="18" fill="' + c + '"/>' + (coat ? '<rect x="40" y="18" width="40" height="34" rx="18" fill="' + coat + '"/><rect x="40" y="36" width="40" height="16" fill="' + coat + '"/>' : '') + '<rect x="46" y="26" width="6" height="40" rx="3" fill="#FFFFFF" opacity=".3"/>'; }
+function slice(layers, top) {
+  var o = '', y = 92;
+  layers.forEach(function (c) { o += '<path d="M18 ' + y + ' L104 ' + y + ' L104 ' + (y - 12) + ' L18 ' + (y - 12) + 'Z" fill="' + c + '"/>'; y -= 12; });
+  return '<ellipse cx="60" cy="96" rx="50" ry="8" fill="#FFFFFF"/>' + o + (top || '');
+}
+Object.assign(ART, {
+  cono1: bg('#FDE6EE') + cone([SCOOP.lucuma]),
+  cono2: bg('#FDE6EE') + cone([SCOOP.frutilla, SCOOP.choco]),
+  copa: bg('#E3F5EF') + '<path d="M28 64 h64 q-4 26 -32 28 q-28 -2 -32 -28z" fill="#FFFFFF" opacity=".85"/><rect x="56" y="90" width="8" height="12" fill="#FFFFFF"/><ellipse cx="60" cy="104" rx="20" ry="5" fill="#FFFFFF"/>' + scoop(42, 58, 15, SCOOP.menta) + scoop(78, 58, 15, SCOOP.frutilla) + scoop(60, 44, 16, SCOOP.choco) + '<rect x="70" y="24" width="8" height="26" rx="3" fill="#E2A85A" transform="rotate(20 74 37)"/>',
+  vegano: bg('#FFF2D6') + '<path d="M30 60 h60 l-8 34 h-44z" fill="#F7E8C8"/>' + scoop(60, 52, 22, SCOOP.mango) + '<path d="M70 30 q10 -8 16 2" stroke="#4C8B2B" stroke-width="4" fill="none" stroke-linecap="round"/>',
+  sundae: bg('#FBEEDC') + '<path d="M30 56 h60 l-10 40 h-40z" fill="#FFFFFF" opacity=".85"/>' + scoop(60, 50, 20, SCOOP.vainilla) + '<path d="M42 44 q6 10 4 18 M60 36 q4 14 0 22 M78 44 q-4 12 -2 18" stroke="' + SCOOP.manjar + '" stroke-width="6" fill="none" stroke-linecap="round"/><path d="M48 28 q12 -14 24 0 q-12 8 -24 0z" fill="#FFFFFF"/><g fill="#8A5A2B"><ellipse cx="54" cy="24" rx="3" ry="2"/><ellipse cx="64" cy="22" rx="3" ry="2"/></g><circle cx="60" cy="16" r="5" fill="#D8432E"/>',
+  banana: bg('#FFF4D6') + '<ellipse cx="60" cy="76" rx="50" ry="18" fill="#FFFFFF"/><path d="M14 72 q46 26 92 0 q-4 10 -46 14 q-42 -4 -46 -14z" fill="#F4D35E"/>' + scoop(38, 64, 13, SCOOP.frutilla) + scoop(60, 60, 13, SCOOP.vainilla) + scoop(82, 64, 13, SCOOP.choco) + '<path d="M30 58 q30 -12 60 0" stroke="#5A2E14" stroke-width="4" fill="none" stroke-linecap="round"/><circle cx="60" cy="44" r="5" fill="#D8432E"/>',
+  waffle: bg('#FBEBDA') + '<rect x="18" y="58" width="84" height="40" rx="8" fill="#E2A85A"/><g stroke="#B97B32" stroke-width="3"><path d="M18 71 h84 M18 85 h84 M32 58 v40 M46 58 v40 M60 58 v40 M74 58 v40 M88 58 v40"/></g>' + scoop(48, 52, 15, SCOOP.vainilla) + scoop(74, 52, 15, SCOOP.frutilla) + '<path d="M26 44 q6 -8 12 0 q-6 6 -12 0z" fill="#E0442E"/><path d="M90 42 q6 -8 12 0 q-6 6 -12 0z" fill="#E0442E"/>',
+  paletaf: bg('#FDE3EA') + paleta('#E2446E'),
+  paletac: bg('#F3E6DC') + paleta(SCOOP.vainilla, '#5A2E14'),
+  paletal: bg('#F1F7DA') + paleta('#E4E86A'),
+  milkshake: bg('#FCEBD6') + tallGlass(SCOOP.lucuma, '<path d="M38 40 q10 -14 22 -6 q12 -10 22 6z" fill="#FFFFFF"/><rect x="64" y="10" width="6" height="40" rx="3" fill="#D8432E" transform="rotate(14 67 30)"/>'),
+  frappe: bg('#EFE4DA') + tallGlass('#A0714B', '<path d="M38 40 q10 -14 22 -6 q12 -10 22 6z" fill="#FFFFFF"/><path d="M48 34 q12 -6 24 0" stroke="#6B3E1E" stroke-width="3" fill="none"/>'),
+  espresso: bg('#EFE4DA') + '<ellipse cx="60" cy="90" rx="30" ry="8" fill="#FFFFFF"/><path d="M42 60 h36 v12 a18 16 0 0 1 -36 0z" fill="#FFFFFF"/><path d="M78 64 a7 7 0 0 1 0 12" stroke="#FFFFFF" stroke-width="5" fill="none"/><ellipse cx="60" cy="60" rx="18" ry="5" fill="#4A2814"/><path d="M54 48 q-3 -6 1 -10 M64 48 q-3 -6 1 -10" stroke="#B9A08A" stroke-width="3" fill="none" stroke-linecap="round"/>',
+  cortado: bg('#F2E8DD') + '<path d="M44 40 h32 l-4 52 h-24z" fill="#FFFFFF" opacity=".7"/><path d="M46 56 h28 l-3 36 h-22z" fill="#8A5A3B"/><path d="M46 56 h28 l-.8 10 h-26.4z" fill="#E8D3B8"/>',
+  latte: bg('#F2E6DA') + cupDesk('#B07A4E', true),
+  capuccino: bg('#F2E6DA') + cupDesk('#E8D3B8', false, '<g fill="#8A5A2B"><circle cx="50" cy="49" r="1.6"/><circle cx="58" cy="51" r="1.6"/><circle cx="66" cy="48" r="1.6"/><circle cx="62" cy="52" r="1.2"/></g>'),
+  mokka: bg('#EEE2D8') + cupDesk('#5A2E14', false, '<path d="M40 48 q18 -16 36 0 q-18 6 -36 0z" fill="#FFFFFF"/><path d="M48 44 q10 -6 20 0" stroke="#5A2E14" stroke-width="2.5" fill="none"/>'),
+  te: bg('#EEF3E2') + cupDesk('#C9822E', false, '<path d="M70 50 l14 -22" stroke="#7C6A55" stroke-width="1.5"/><rect x="80" y="20" width="10" height="12" rx="2" fill="#F7E6CF" stroke="#C9822E"/>'),
+  matcha: bg('#E7F2DF') + cupDesk('#8DBE5A', true),
+  croissant: bg('#FBEBD8') + '<ellipse cx="60" cy="92" rx="46" ry="8" fill="#FFFFFF"/><path d="M14 80 q8 -30 30 -36 q16 -4 32 0 q22 6 30 36 q-10 -6 -18 -4 q-8 -14 -28 -14 q-20 0 -28 14 q-8 -2 -18 4z" fill="#E2A85A"/><path d="M44 46 q-4 18 4 30 M60 44 v32 M76 46 q4 18 -4 30" stroke="#B97B32" stroke-width="3" fill="none" stroke-linecap="round"/>',
+  milhojas: bg('#F7EBDD') + slice(['#E9C38A', '#C98A4B', '#F1D6A6', '#C98A4B', '#F1D6A6', '#C98A4B', '#E9C38A'], '<path d="M18 8 L104 8" stroke="none"/><g fill="#8A5A2B"><ellipse cx="40" cy="6" rx="0" ry="0"/></g>'),
+  brownie: bg('#EFE2D8') + '<ellipse cx="60" cy="92" rx="46" ry="8" fill="#FFFFFF"/><rect x="26" y="50" width="68" height="40" rx="6" fill="#5A2E14"/><rect x="26" y="50" width="68" height="10" rx="5" fill="#6E3A1C"/><g fill="#C9A27A"><ellipse cx="44" cy="70" rx="5" ry="3"/><ellipse cx="70" cy="76" rx="5" ry="3"/><ellipse cx="80" cy="64" rx="4" ry="2.5"/></g>',
+  cheesecake: bg('#FCE6EA') + slice(['#C98A4B', '#FBF1DC', '#FBF1DC', '#FBF1DC'], '<path d="M18 44 q43 -8 86 0 v8 h-86z" fill="#D9365F"/>'),
+  avepalta: bg('#EAF2E0') + sandwich(['#F3E2C3', PALTA, MAYO]),
+  tostadas: bg('#EEF3E2') + '<ellipse cx="60" cy="92" rx="48" ry="8" fill="#FFFFFF"/><rect x="18" y="54" width="40" height="36" rx="10" fill="#C98A4B"/><rect x="62" y="54" width="40" height="36" rx="10" fill="#C98A4B"/><rect x="22" y="58" width="32" height="26" rx="8" fill="' + PALTA + '"/><rect x="66" y="58" width="32" height="26" rx="8" fill="' + PALTA + '"/><g fill="#3E2A14"><circle cx="30" cy="66" r="1.4"/><circle cx="40" cy="74" r="1.4"/><circle cx="46" cy="64" r="1.4"/><circle cx="76" cy="70" r="1.4"/><circle cx="86" cy="64" r="1.4"/><circle cx="90" cy="76" r="1.4"/></g>'
+});
+
+Object.assign(ART, {
+  piscosour: bg('#FBF2D8') + '<path d="M28 34 h64 q-4 30 -32 32 q-28 -2 -32 -32z" fill="#FFFFFF" opacity=".75"/><path d="M31 40 h58 q-4 22 -29 24 q-25 -2 -29 -24z" fill="#E9DE8C"/><path d="M31 40 h58 q-1 6 -3 10 h-52 q-2 -4 -3 -10z" fill="#FFFDF2"/><g fill="#8A3A1E"><circle cx="54" cy="44" r="1.8"/><circle cx="62" cy="43" r="1.8"/><circle cx="68" cy="46" r="1.5"/></g><rect x="57" y="64" width="6" height="30" fill="#FFFFFF" opacity=".85"/><ellipse cx="60" cy="96" rx="18" ry="5" fill="#FFFFFF" opacity=".85"/><path d="M82 30 a10 10 0 0 1 10 10 h-10z" fill="#9BC53D"/>',
+  piscola: bg('#EFE6F2') + '<path d="M38 24 h44 l-4 78 h-36z" fill="#FFFFFF" opacity=".7"/><path d="M40 36 h40 l-3.4 66 h-33.2z" fill="#3A1D12"/><g fill="#FFFFFF" opacity=".55"><rect x="46" y="40" width="14" height="12" rx="3" transform="rotate(12 53 46)"/><rect x="62" y="50" width="12" height="12" rx="3" transform="rotate(-10 68 56)"/><rect x="48" y="62" width="12" height="12" rx="3" transform="rotate(20 54 68)"/></g><rect x="66" y="8" width="5" height="50" rx="2.5" fill="#E0442E" transform="rotate(14 68 30)"/>',
+  mojito: bg('#E4F4E4') + '<path d="M38 26 h44 l-4 76 h-36z" fill="#FFFFFF" opacity=".7"/><path d="M40 40 h40 l-3.4 62 h-33.2z" fill="#DDF2C9"/><g fill="#3E8E3A"><ellipse cx="52" cy="70" rx="7" ry="4" transform="rotate(-30 52 70)"/><ellipse cx="66" cy="82" rx="7" ry="4" transform="rotate(25 66 82)"/><ellipse cx="58" cy="54" rx="6" ry="3.5" transform="rotate(10 58 54)"/></g><circle cx="70" cy="62" r="8" fill="#B5D84A"/><circle cx="70" cy="62" r="5" fill="#E2F2A8"/><path d="M76 24 q8 -12 16 -4" stroke="#3E8E3A" stroke-width="4" fill="none" stroke-linecap="round"/>',
+  terremoto: bg('#FCE7DA') + '<path d="M32 30 h56 l-6 74 h-44z" fill="#FFFFFF" opacity=".7"/><path d="M34 46 h52 l-4.8 58 h-42.4z" fill="#F2E3A8"/>' + scoop(60, 40, 18, '#F7D95A') + '<path d="M46 60 q6 14 2 30 M70 60 q-4 18 2 30" stroke="#D93B4B" stroke-width="5" fill="none" stroke-linecap="round"/>',
+  spritz: bg('#FDE8D8') + '<path d="M32 30 q0 40 28 44 q28 -4 28 -44z" fill="#FFFFFF" opacity=".7"/><path d="M35 44 q2 26 25 28 q23 -2 25 -28z" fill="#F07A2E"/><rect x="57" y="74" width="6" height="22" fill="#FFFFFF" opacity=".85"/><ellipse cx="60" cy="98" rx="18" ry="5" fill="#FFFFFF" opacity=".85"/><circle cx="72" cy="50" r="8" fill="#F7A23B"/><circle cx="72" cy="50" r="5" fill="#FBD08A"/>',
+  schop: bg('#FFF2D2') + '<rect x="30" y="34" width="50" height="68" rx="8" fill="#FFFFFF" opacity=".75"/><path d="M80 48 h8 a10 10 0 0 1 10 10 v16 a10 10 0 0 1 -10 10 h-8" stroke="#FFFFFF" stroke-width="7" fill="none" opacity=".85"/><rect x="34" y="46" width="42" height="52" rx="5" fill="#E8A419"/><path d="M28 40 q6 -12 16 -6 q8 -10 18 -2 q10 -8 18 4 q6 4 0 10 h-52 q-6 -2 0 -6z" fill="#FFFDF2"/><g fill="#FBD66E"><circle cx="46" cy="70" r="2"/><circle cx="58" cy="82" r="2"/><circle cx="66" cy="64" r="2"/></g>',
+  ipa: bg('#FCEFD6') + '<path d="M38 26 h44 l-5 76 h-34z" fill="#FFFFFF" opacity=".7"/><path d="M40 40 h40 l-4.2 62 h-31.6z" fill="#D9821A"/><path d="M38 32 q10 -10 22 -2 q12 -8 22 2 v8 h-44z" fill="#FFF6DE"/>',
+  sinalcohol: bg('#E8F1F6') + '<rect x="50" y="18" width="20" height="16" rx="3" fill="#3B6E2E"/><path d="M48 34 h24 v10 q8 6 8 16 v40 a6 6 0 0 1 -6 6 h-28 a6 6 0 0 1 -6 -6 v-40 q0 -10 8 -16z" fill="#4D8A3A"/><rect x="40" y="64" width="40" height="22" fill="#F5E9C8"/><text x="60" y="79" text-anchor="middle" font-family="sans-serif" font-weight="700" font-size="10" fill="#4D8A3A">0,0%</text>',
+  copavino: bg('#F6E3E6') + '<path d="M38 22 q0 40 22 42 q22 -2 22 -42z" fill="#FFFFFF" opacity=".7"/><path d="M40 38 q2 24 20 25 q18 -1 20 -25z" fill="#7A1F2E"/><rect x="58" y="64" width="4" height="28" fill="#FFFFFF" opacity=".85"/><ellipse cx="60" cy="96" rx="18" ry="5" fill="#FFFFFF" opacity=".85"/>',
+  botella: bg('#EEF2E2') + '<rect x="54" y="10" width="12" height="26" rx="3" fill="#2E4A2A"/><path d="M54 36 h12 q14 10 14 24 v44 a6 6 0 0 1 -6 6 h-28 a6 6 0 0 1 -6 -6 v-44 q0 -14 14 -24z" fill="#3E6B37"/><rect x="40" y="66" width="40" height="26" rx="2" fill="#F7EFD8"/><path d="M48 76 h24 M52 82 h16" stroke="#7A2E3A" stroke-width="3"/>',
+  tabla: bg('#F4E7DA') + '<rect x="12" y="44" width="96" height="50" rx="10" fill="#B97B32"/><rect x="100" y="60" width="16" height="16" rx="6" fill="#B97B32"/><path d="M22 54 l20 0 l-10 18z" fill="#F4C542"/><path d="M48 56 l18 0 l-9 16z" fill="#F7DC7A"/><g fill="#C2413A"><circle cx="78" cy="58" r="8"/><circle cx="90" cy="70" r="7"/><circle cx="76" cy="76" r="7"/></g><g fill="#F3B1A8"><circle cx="78" cy="58" r="2"/><circle cx="90" cy="70" r="2"/></g><g fill="#3B4A1E"><circle cx="30" cy="82" r="4"/><circle cx="40" cy="84" r="4"/><circle cx="50" cy="82" r="4"/></g><rect x="56" y="78" width="20" height="10" rx="4" fill="#E2A85A"/>',
+  papas: bg('#FFF1D6') + '<g fill="#F2C14E"><rect x="36" y="22" width="8" height="46" rx="3" transform="rotate(-10 40 45)"/><rect x="48" y="16" width="8" height="50" rx="3" transform="rotate(-3 52 41)"/><rect x="60" y="18" width="8" height="48" rx="3" transform="rotate(5 64 42)"/><rect x="72" y="24" width="8" height="44" rx="3" transform="rotate(12 76 46)"/><rect x="54" y="26" width="8" height="40" rx="3" transform="rotate(-18 58 46)"/></g><path d="M30 54 h60 l-8 50 h-44z" fill="#D8432E"/><path d="M36 64 h48" stroke="#FFFFFF" stroke-width="3"/>',
+  limonada: bg('#EEF7DE') + '<path d="M38 26 h44 l-4 76 h-36z" fill="#FFFFFF" opacity=".7"/><path d="M40 40 h40 l-3.4 62 h-33.2z" fill="#F2F0B0"/><circle cx="76" cy="34" r="11" fill="#D8E86A"/><circle cx="76" cy="34" r="7" fill="#F4F8C8"/><g fill="#4C9A3A"><ellipse cx="54" cy="58" rx="6" ry="3.5" transform="rotate(-25 54 58)"/><ellipse cx="62" cy="74" rx="6" ry="3.5" transform="rotate(20 62 74)"/></g><rect x="48" y="80" width="10" height="8" rx="2" fill="#E8C27A"/>'
+});
+
+function pic(it) {
+  if (it.foto) return '<img src="' + esc(it.foto) + '" alt="' + esc(it.n) + '" loading="lazy">';
+  return '<svg viewBox="0 0 120 120" preserveAspectRatio="xMidYMid slice" role="img" aria-label="' + esc(it.n) + '">' + (ART[it.img] || bg('#EEF4EC')) + '</svg>';
+}
+
+var BADGE = { reco: ['Recomendado', 'b-reco'], veg: ['Vegetariano', 'b-veg'], pic: ['Picante', 'b-pic'], new: ['Nuevo', 'b-new'] };
+var money = function (n) { return '$' + n.toLocaleString('es-CL'); };
+var slug = function (s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-'); };
+var cart = {};
+var esc = function (s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+
+
+function estado() {
+  var now = new Date(), min = function (h) { var a = h.split(':'); return +a[0] * 60 + +a[1]; };
+  var t = now.getHours() * 60 + now.getMinutes();
+  var check = function (day, offset) {
+    var h = LOCAL.horario[day]; if (!h) return null;
+    var o = min(h[0]), c = min(h[1]); if (c <= o) c += 1440;
+    var x = t + offset; return (x >= o && x < c) ? h[1] : null;
+  };
+  var today = now.getDay(), yday = (today + 6) % 7;
+  var open = check(today, 0) || check(yday, 1440);
+  var el = document.getElementById('r-estado');
+  el.classList.toggle('closed', !open);
+  el.lastElementChild.textContent = open ? 'Abierto ahora · cierra ' + open : 'Cerrado ahora';
+}
+
+
+function control(it, key, qty) {
+  if (it.agotado) return '<span class="out">Agotado</span>';
+  if (qty) return '<span class="step"><button type="button" data-k="' + esc(key) + '" data-d="-1" aria-label="Quitar uno">−</button><span>' + qty + '</span><button type="button" data-k="' + esc(key) + '" data-d="1" aria-label="Agregar uno">+</button></span>';
+  return '<button class="add" type="button" data-k="' + esc(key) + '" data-d="1">Agregar</button>';
+}
+function featured(q) {
+  if (q) return '';
+  var cards = '';
+  MENU.forEach(function (c) { c.items.forEach(function (it) {
+    if ((it.t || []).indexOf('reco') < 0 || it.agotado) return;
+    var key = c.cat + '|' + it.n, qty = cart[key] ? cart[key].q : 0;
+    cards += '<article class="fcard"><div class="pic">' + pic(it) + '</div><div class="body"><h3>' + esc(it.n) + '</h3><div class="bottom"><span class="price">' + money(it.p) + '</span>' + control(it, key, qty) + '</div></div></article>';
+  }); });
+  return cards ? '<section class="feat" aria-label="Recomendados de la casa"><h2>Recomendados de la casa</h2><div class="scroll"><div class="row">' + cards + '</div></div></section>' : '';
+}
+function render(q) {
+  q = (q || '').trim().toLowerCase();
+  var html = '', nav = '', hits = 0;
+  MENU.forEach(function (c) {
+    var items = c.items.filter(function (it) { return !q || (it.n + ' ' + it.d).toLowerCase().indexOf(q) > -1; });
+    if (!items.length) return;
+    var id = slug(c.cat); hits += items.length;
+    nav += '<a href="#' + id + '" data-id="' + id + '">' + esc(c.cat) + '</a>';
+    html += '<section class="cat" id="' + id + '"><h2>' + esc(c.cat) + ' <small>' + items.length + '</small></h2>';
+    items.forEach(function (it) {
+      var key = c.cat + '|' + it.n, qty = cart[key] ? cart[key].q : 0;
+      var badges = (it.t || []).map(function (b) { return '<span class="b ' + BADGE[b][1] + '">' + BADGE[b][0] + '</span>'; }).join('');
+      var ctrl = control(it, key, qty); var _unused = it.agotado ? '<span class="out">Agotado</span>'
+        : qty ? '<span class="step"><button type="button" data-k="' + esc(key) + '" data-d="-1" aria-label="Quitar uno">−</button><span>' + qty + '</span><button type="button" data-k="' + esc(key) + '" data-d="1" aria-label="Agregar uno">+</button></span>'
+        : '<button class="add" type="button" data-k="' + esc(key) + '" data-d="1">Agregar</button>';
+      html += '<article class="item' + (it.agotado ? ' agotado' : '') + '"><div class="thumb">' + pic(it) + '</div><div class="txt"><h3>' + esc(it.n) + '</h3><p>' + esc(it.d) + '</p>' + (badges ? '<div class="badges">' + badges + '</div>' : '') + '<div class="bottom"><span class="price">' + money(it.p) + '</span>' + ctrl + '</div></div></article>';
+    });
+    html += '</section>';
+  });
+  document.getElementById('menu').innerHTML = hits ? featured(q) + html : '<p class="none">No encontramos "' + esc(q) + '" en el menú. Prueba con otra palabra.</p>';
+  document.getElementById('cats').innerHTML = nav;
+  spy();
+}
+function find(key) { var p = key.split('|'); for (var i = 0; i < MENU.length; i++) if (MENU[i].cat === p[0]) for (var j = 0; j < MENU[i].items.length; j++) if (MENU[i].items[j].n === p[1]) return MENU[i].items[j]; }
+document.getElementById('menu').addEventListener('click', function (e) {
+  var b = e.target.closest('button[data-k]'); if (!b) return;
+  var k = b.getAttribute('data-k'), d = +b.getAttribute('data-d'), it = find(k);
+  if (!cart[k]) cart[k] = { it: it, q: 0 };
+  cart[k].q += d; if (cart[k].q <= 0) delete cart[k];
+  render(document.getElementById('q').value); updateCart();
+});
+document.getElementById('q').addEventListener('input', function (e) { render(e.target.value); });
+
+function updateCart() {
+  var n = 0, tot = 0, lines = '';
+  Object.keys(cart).forEach(function (k) { var c = cart[k]; n += c.q; tot += c.q * c.it.p; lines += '<div class="line"><span>' + c.q + ' × ' + esc(c.it.n) + '</span><span>' + money(c.q * c.it.p) + '</span></div>'; });
+  document.getElementById('cartbar').hidden = n === 0;
+  document.getElementById('c-count').textContent = n;
+  document.getElementById('c-total').textContent = money(tot);
+  document.getElementById('p-total').textContent = money(tot);
+  document.getElementById('lines').innerHTML = lines;
+  if (n === 0) document.getElementById('sheet').hidden = true;
+  link();
+}
+function link() {
+  var llevar = document.getElementById('t-llevar').checked;
+  document.getElementById('f-mesa').hidden = llevar;
+  var msg = 'Hola ' + LOCAL.nombre + ', quiero hacer este pedido:\n';
+  var tot = 0;
+  Object.keys(cart).forEach(function (k) { var c = cart[k]; tot += c.q * c.it.p; msg += '• ' + c.q + ' × ' + c.it.n + ' (' + money(c.q * c.it.p) + ')\n'; });
+  msg += 'Total: ' + money(tot) + '\n';
+  msg += llevar ? 'Para llevar' : 'Mesa: ' + (document.getElementById('mesa').value.trim() || 'por confirmar');
+  var nota = document.getElementById('nota').value.trim(); if (nota) msg += '\nComentario: ' + nota;
+  document.getElementById('send').href = 'https://wa.me/' + LOCAL.whatsapp + '?text=' + encodeURIComponent(msg);
+}
+['t-mesa', 't-llevar', 'mesa', 'nota'].forEach(function (id) { document.getElementById(id).addEventListener('input', link); document.getElementById(id).addEventListener('change', link); });
+document.getElementById('open-cart').addEventListener('click', function () { document.getElementById('sheet').hidden = false; document.getElementById('close-cart').focus(); });
+document.getElementById('close-cart').addEventListener('click', function () { document.getElementById('sheet').hidden = true; });
+document.getElementById('sheet').addEventListener('click', function (e) { if (e.target.id === 'sheet') e.currentTarget.hidden = true; });
+document.addEventListener('keydown', function (e) { if (e.key === 'Escape') document.getElementById('sheet').hidden = true; });
+
+function spy() {
+  var links = document.querySelectorAll('#cats a'), secs = document.querySelectorAll('section.cat');
+  var on = function () {
+    var cur = secs[0] ? secs[0].id : '';
+    secs.forEach(function (s) { if (s.getBoundingClientRect().top < 120) cur = s.id; });
+    links.forEach(function (a) {
+      var act = a.getAttribute('data-id') === cur; a.classList.toggle('on', act);
+      if (act) { var sc = a.closest('.scroll'); var l = a.offsetLeft - 20; if (Math.abs(sc.scrollLeft - l) > 40) sc.scrollLeft = l; }
+    });
+  };
+  window.onscroll = on; on();
+}
+function useDemo(id) {
+  if (!DEMOS[id]) id = 'sangucheria';
+  var d = DEMOS[id]; LOCAL = d.local; MENU = d.menu; cart = {};
+  var r = document.documentElement.style;
+  r.setProperty('--brand', d.colores.brand); r.setProperty('--accent', d.colores.accent);
+  document.getElementById('r-nombre').textContent = LOCAL.nombre;
+  document.getElementById('r-tag').textContent = LOCAL.descripcion;
+  document.getElementById('r-dir').textContent = LOCAL.direccion;
+  document.getElementById('r-horario').textContent = LOCAL.horarioTexto;
+  var av = document.getElementById('r-aviso'); av.hidden = !LOCAL.aviso; av.textContent = LOCAL.aviso || '';
+  document.getElementById('q').value = '';
+  document.getElementById('q').placeholder = 'Buscar en el menú… ej: ' + MENU[0].items[0].n.toLowerCase();
+  document.querySelectorAll('#tipos button').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.demo === id ? 'true' : 'false'); });
+  estado(); render(''); updateCart(); window.scrollTo(0, 0);
+}
+var tipos = document.getElementById('tipos');
+Object.keys(DEMOS).forEach(function (id) {
+  var b = document.createElement('button'); b.type = 'button'; b.dataset.demo = id; b.textContent = DEMOS[id].boton;
+  b.addEventListener('click', function () { if (location.hash !== '#' + id) location.hash = id; else useDemo(id); });
+  tipos.appendChild(b);
+});
+window.addEventListener('hashchange', function () { useDemo(location.hash.slice(1)); });
+useDemo(location.hash.slice(1));
+</script>
+
+</html>

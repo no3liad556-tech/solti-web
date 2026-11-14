@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<title>Asistente IA Soltic</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Demo Soltic · Asistente con IA para WhatsApp. Layout: explicación a la izquierda, teléfono con el chat al centro,
+   panel del dueño a la derecha. Marco con colores Soltic; dentro del chat, el negocio de ejemplo. */
+:root {
+  --navy: #0B1F4A; --gold: #F5C94A; --bg: #F3F5FA; --card: #FFFFFF; --fg: #0B1F4A; --muted: #4A587A; --line: #D9DFEC;
+  --wa-head: #075E54; --wa-bg: #ECE5DD; --wa-out: #DCF8C6; --wa-in: #FFFFFF; --wa-ink: #1B1B1B;
+  --f-display: "Sora", "Segoe UI", system-ui, sans-serif; --f-body: "Instrument Sans", "Segoe UI", system-ui, sans-serif; --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { --bg: #071433; --card: #0E2350; --fg: #EEF2FA; --muted: #A7B3CE; --line: #1E3466; --wa-bg: #0B141A; --wa-out: #005C4B; --wa-in: #202C33; --wa-ink: #E9EDEF; color-scheme: dark; } }
+:root[data-theme="dark"] { --bg: #071433; --card: #0E2350; --fg: #EEF2FA; --muted: #A7B3CE; --line: #1E3466; --wa-bg: #0B141A; --wa-out: #005C4B; --wa-in: #202C33; --wa-ink: #E9EDEF; color-scheme: dark; }
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+body { margin: 0; background: var(--bg); color: var(--fg); font-family: var(--f-body); font-size: 16px; line-height: 1.55; }
+h1, h2, h3 { margin: 0; font-family: var(--f-display); text-wrap: balance; }
+p { margin: 0; }
+button, input { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; border-radius: 8px; }
+.top { background: var(--navy); color: #B9C4DD; font-size: 13.5px; }
+.top .wrap { display: flex; justify-content: space-between; gap: 10px; padding-block: 9px; flex-wrap: wrap; }
+.top b { color: #FFFFFF; }
+.top a { color: var(--gold); font-weight: 700; text-decoration: none; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.layout { display: grid; grid-template-columns: 1fr 390px 1fr; gap: 32px; align-items: start; padding-block: 40px 60px; }
+.intro { display: flex; flex-direction: column; gap: 16px; padding-top: 20px; }
+.eyebrow { font-family: var(--f-mono); font-size: 12.5px; letter-spacing: .12em; text-transform: uppercase; color: #8A6A0F; }
+:root[data-theme="dark"] .eyebrow { color: var(--gold); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .eyebrow { color: var(--gold); } }
+.intro h1 { font-size: clamp(28px, 3vw, 38px); letter-spacing: -.015em; line-height: 1.15; }
+.intro p { color: var(--muted); }
+.feats { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.feats li { display: grid; grid-template-columns: 30px 1fr; gap: 10px; align-items: start; }
+.feats li i { width: 30px; height: 30px; border-radius: 9px; background: var(--navy); display: grid; place-items: center; }
+.feats li i svg { width: 17px; height: 17px; stroke: var(--gold); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.feats b { display: block; }
+.feats span { color: var(--muted); font-size: 14.5px; }
+.note { font-size: 13.5px; color: var(--muted); border-left: 3px solid var(--gold); padding-left: 12px; }
+
+.phone { background: #111111; border-radius: 42px; padding: 12px; box-shadow: 0 30px 60px rgba(11,31,74,.28); }
+.screen { border-radius: 32px; overflow: hidden; background: var(--wa-bg); display: flex; flex-direction: column; height: 680px; }
+.wa-head { background: var(--wa-head); color: #FFFFFF; display: flex; align-items: center; gap: 11px; padding: 14px 16px; }
+.av { width: 40px; height: 40px; border-radius: 50%; background: #F7D6DF; display: grid; place-items: center; flex: none; }
+.av svg { width: 26px; height: 26px; }
+.wa-head b { display: block; font-size: 15.5px; }
+.wa-head small { font-size: 12.5px; opacity: .85; }
+.msgs { flex: 1; overflow-y: auto; padding: 14px 12px; display: flex; flex-direction: column; gap: 8px; }
+.day { align-self: center; background: rgba(255,255,255,.75); color: #54656F; font-size: 12px; padding: 3px 10px; border-radius: 8px; }
+.m { max-width: 84%; padding: 8px 11px 18px; border-radius: 10px; position: relative; font-size: 15px; line-height: 1.42; color: var(--wa-ink); box-shadow: 0 1px 1px rgba(0,0,0,.08); }
+.m time { position: absolute; right: 9px; bottom: 3px; font-size: 11px; opacity: .6; }
+.m.in { background: var(--wa-in); align-self: flex-start; border-top-left-radius: 2px; }
+.m.out { background: var(--wa-out); align-self: flex-end; border-top-right-radius: 2px; }
+.m ul { margin: 4px 0 0; padding-left: 18px; }
+.m .bot { display: block; font-size: 11.5px; font-weight: 700; color: #128C7E; margin-bottom: 2px; }
+.typing { align-self: flex-start; background: var(--wa-in); border-radius: 10px; padding: 12px 14px; display: flex; gap: 4px; }
+.typing i { width: 7px; height: 7px; border-radius: 50%; background: #9AA4AA; animation: b 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; } .typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes b { 0%, 80%, 100% { transform: translateY(0); opacity: .5; } 40% { transform: translateY(-4px); opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .typing i { animation: none; } }
+.quick { display: flex; gap: 6px; padding: 8px 10px 0; overflow-x: auto; scrollbar-width: none; }
+.quick::-webkit-scrollbar { display: none; }
+.quick button { flex: none; border: 1px solid #128C7E; color: #128C7E; background: var(--wa-in); border-radius: 999px; padding: 6px 12px; font-size: 13.5px; font-weight: 600; cursor: pointer; }
+.composer { display: flex; gap: 8px; padding: 8px 10px 12px; }
+.composer input { flex: 1; min-width: 0; border: 0; border-radius: 999px; padding: 11px 16px; background: var(--wa-in); color: var(--wa-ink); }
+.composer button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: #128C7E; display: grid; place-items: center; cursor: pointer; flex: none; }
+.composer svg { width: 20px; height: 20px; fill: #FFFFFF; }
+
+.owner { display: flex; flex-direction: column; gap: 14px; padding-top: 20px; }
+.owner h2 { font-size: 19px; }
+.owner > p { color: var(--muted); font-size: 14.5px; }
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stat { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; display: flex; flex-direction: column; gap: 2px; }
+.stat small { color: var(--muted); font-size: 13px; }
+.stat b { font: 700 24px var(--f-display); font-variant-numeric: tabular-nums; }
+.log { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 6px 14px; }
+.log div { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.log div:last-child { border-bottom: 0; }
+.log span:first-child { min-width: 0; }
+.tag { font-size: 12px; font-weight: 700; padding: 2px 9px; border-radius: 999px; white-space: nowrap; align-self: center; }
+.t-q { background: #DCE6FB; color: #1C3F8F; } .t-p { background: #D7F2E1; color: #146C3A; } .t-h { background: #FDEFC6; color: #7A5A00; }
+.cta { display: inline-flex; align-items: center; gap: 9px; background: var(--gold); color: var(--navy); font-weight: 700; padding: 12px 18px; border-radius: 999px; text-decoration: none; align-self: flex-start; }
+@media (max-width: 1100px) { .layout { grid-template-columns: 1fr 390px; } .owner { grid-column: 1 / -1; padding-top: 0; } }
+@media (max-width: 800px) { .layout { grid-template-columns: minmax(0, 1fr); padding-block: 24px 48px; } .phone { max-width: 400px; width: 100%; margin: 0 auto; } .screen { height: 600px; } .intro { padding-top: 0; } }
+</style>
+
+<div class="top"><div class="wrap"><span><b>Demo · Asistente con IA de Soltic</b> · Negocio y respuestas de ejemplo</span><a href="/">Hecho por Soltic</a></div></div>
+<div class="wrap layout">
+  <div class="intro">
+    <span class="eyebrow">Automatización con IA</span>
+    <h1>Tu negocio responde por WhatsApp, incluso mientras duermes</h1>
+    <p>Pruébalo como si fueras un cliente de la "Pastelería Dulce Hogar". Pregunta por precios u horarios, o encarga una torta.</p>
+    <ul class="feats">
+      <li><i><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></i><div><b>Atiende las 24 horas</b><span>Responde al instante, también fines de semana y feriados.</span></div></li>
+      <li><i><svg viewBox="0 0 24 24"><path d="M4 6h16M4 12h10M4 18h7"/></svg></i><div><b>Toma pedidos completos</b><span>Pregunta lo necesario y te deja el pedido listo para confirmar.</span></div></li>
+      <li><i><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M3 20c1-3.5 3.3-5.5 6-5.5s5 2 6 5.5"/><path d="M17 8l2 2 3-4"/></svg></i><div><b>Te pasa los casos especiales</b><span>Si algo requiere a una persona, avisa y te deriva la conversación.</span></div></li>
+    </ul>
+    <p class="note">Demo con respuestas de ejemplo para que veas cómo funciona. La versión real usa inteligencia artificial, aprende la información de tu negocio y se conecta a tu WhatsApp.</p>
+  </div>
+
+  <div class="phone"><div class="screen">
+    <div class="wa-head">
+      <span class="av"><svg viewBox="0 0 40 40" aria-hidden="true"><rect x="9" y="20" width="22" height="12" rx="3" fill="#E9A6B8"/><rect x="11" y="14" width="18" height="8" rx="3" fill="#F7E3C2"/><path d="M11 18 q4 3 9 0 q5 3 9 0" stroke="#D9365F" stroke-width="2" fill="none"/><circle cx="20" cy="11" r="3" fill="#D9365F"/></svg></span>
+      <div><b>Pastelería Dulce Hogar</b><small>Asistente virtual · en línea</small></div>
+    </div>
+    <div class="msgs" id="msgs" aria-live="polite"><span class="day">Hoy</span></div>
+    <div class="quick" id="quick"></div>
+    <form class="composer" id="comp"><input id="ask" autocomplete="off" placeholder="Escribe un mensaje" aria-label="Escribe un mensaje"><button type="submit" aria-label="Enviar"><svg viewBox="0 0 24 24"><path d="M3 20l18-8L3 4v6l12 2-12 2z"/></svg></button></form>
+  </div></div>
+
+  <div class="owner">
+    <span class="eyebrow">Lo que ve el dueño</span>
+    <h2>Resumen del asistente</h2>
+    <p>Cada conversación queda registrada. Los pedidos llegan ordenados y listos para confirmar.</p>
+    <div class="stats">
+      <div class="stat"><small>Consultas respondidas</small><b id="s-q">0</b></div>
+      <div class="stat"><small>Pedidos tomados</small><b id="s-p">0</b></div>
+      <div class="stat"><small>Valor de pedidos</small><b id="s-v">$0</b></div>
+      <div class="stat"><small>Derivadas a una persona</small><b id="s-h">0</b></div>
+    </div>
+    <div class="log" id="log"><div><span>Aquí aparecerá cada conversación de esta demo.</span></div></div>
+    <a class="cta" href="https://wa.me/56973020975?text=Hola%20Soltic%2C%20vi%20la%20demo%20del%20asistente%20con%20IA%20y%20quiero%20uno%20para%20mi%20negocio." target="_blank" rel="noopener">Quiero uno para mi negocio</a>
+  </div>
+</div>
+
+<script>
+/* ===================== INFORMACIÓN DEL NEGOCIO DE EJEMPLO ===================== */
+var NEG = {
+  nombre: 'Pastelería Dulce Hogar',
+  horario: 'lunes a sábado de 9:00 a 20:00, y domingos de 10:00 a 14:00',
+  direccion: 'Av. Ejemplo 800, La Florida',
+  despacho: 'Hacemos despacho en La Florida, Puente Alto y Peñalolén por $3.500. Pedidos sobre $40.000 tienen despacho gratis.',
+  pagos: 'Aceptamos transferencia, débito, crédito y efectivo. Para tortas encargadas pedimos un abono del 50%.',
+  tamanos: [['10 personas', 18000], ['15 personas', 24000], ['20 personas', 30000]],
+  sabores: ['Tres leches', 'Selva negra', 'Mil hojas', 'Lúcuma manjar'],
+  fechas: ['Mañana', 'Este sábado', 'Otra fecha']
+};
+/* ============================================================================ */
+var $ = function (n) { return '$' + n.toLocaleString('es-CL'); };
+var esc = function (s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
+var stats = { q: 0, p: 0, v: 0, h: 0 }, logs = [], flow = null, pedido = {};
+function now() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
+function add(html, out) {
+  var box = document.getElementById('msgs'), m = document.createElement('div');
+  m.className = 'm ' + (out ? 'out' : 'in'); m.innerHTML = (out ? '' : '<span class="bot">Asistente</span>') + html + '<time>' + now() + '</time>';
+  box.appendChild(m); box.scrollTop = box.scrollHeight;
+}
+function bot(html, quick) {
+  var box = document.getElementById('msgs'), t = document.createElement('div');
+  t.className = 'typing'; t.innerHTML = '<i></i><i></i><i></i>'; box.appendChild(t); box.scrollTop = box.scrollHeight;
+  setQuick([]);
+  setTimeout(function () { t.remove(); add(html); setQuick(quick || DEFAULT); }, 650);
+}
+var DEFAULT = ['Quiero encargar una torta', '¿Cuál es el horario?', '¿Tienen despacho?', '¿Cuánto cuesta una torta?', 'Formas de pago', 'Hablar con una persona'];
+function setQuick(list) { document.getElementById('quick').innerHTML = list.map(function (q) { return '<button type="button">' + esc(q) + '</button>'; }).join(''); }
+function logIt(txt, kind) {
+  var label = { q: ['Consulta', 't-q'], p: ['Pedido', 't-p'], h: ['Derivada', 't-h'] }[kind];
+  logs.unshift('<div><span>' + esc(txt) + '</span><span class="tag ' + label[1] + '">' + label[0] + '</span></div>');
+  document.getElementById('log').innerHTML = logs.slice(0, 6).join('');
+  stats[kind]++; document.getElementById('s-q').textContent = stats.q; document.getElementById('s-p').textContent = stats.p; document.getElementById('s-h').textContent = stats.h; document.getElementById('s-v').textContent = $(stats.v);
+}
+function norm(s) { return s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, ''); }
+
+function reply(txt) {
+  var t = norm(txt);
+  if (flow === 'tamano') { var tz = NEG.tamanos.filter(function (x) { return t.indexOf(norm(x[0]).split(' ')[0]) > -1; })[0]; if (!tz) return bot('Elige uno de los tamaños, por favor:', NEG.tamanos.map(function (x) { return x[0]; })); pedido.tam = tz; flow = 'sabor'; return bot('¡Perfecto! Torta para <b>' + tz[0] + '</b>. ¿De qué sabor la quieres?', NEG.sabores); }
+  if (flow === 'sabor') { var sb = NEG.sabores.filter(function (x) { return t.indexOf(norm(x).split(' ')[0]) > -1; })[0]; if (!sb) return bot('Tenemos estos sabores:', NEG.sabores); pedido.sab = sb; flow = 'fecha'; return bot('Rica elección 😋 ¿Para cuándo la necesitas? Las tortas se encargan con al menos 24 horas de anticipación.', NEG.fechas); }
+  if (flow === 'fecha') { pedido.fec = txt; flow = 'confirma'; return bot('Este es tu pedido:<ul><li>Torta ' + esc(pedido.sab) + ' para ' + pedido.tam[0] + '</li><li>Para: ' + esc(pedido.fec) + '</li><li>Total: <b>' + $(pedido.tam[1]) + '</b> (abono de ' + $(pedido.tam[1] / 2) + ')</li></ul>¿Lo confirmo?', ['Sí, confirmar', 'Cambiar algo']); }
+  if (flow === 'confirma') {
+    if (/^si|confirm/.test(t)) { flow = null; stats.v += pedido.tam[1]; logIt('Torta ' + pedido.sab + ' · ' + pedido.tam[0] + ' · ' + pedido.fec, 'p'); return bot('¡Listo! Tu pedido quedó registrado ✅ En unos minutos una persona de la pastelería te escribe para coordinar el abono. ¡Gracias por preferirnos!'); }
+    flow = 'tamano'; return bot('Sin problema, partamos de nuevo. ¿Para cuántas personas es la torta?', NEG.tamanos.map(function (x) { return x[0]; }));
+  }
+  if (/encarg|pedir|pedido|quiero una torta|reserv/.test(t)) { flow = 'tamano'; pedido = {}; logIt(txt, 'q'); return bot('¡Feliz de ayudarte con tu torta! 🎂 ¿Para cuántas personas es?', NEG.tamanos.map(function (x) { return x[0]; })); }
+  if (/horario|abren|cierran|hora|atienden/.test(t)) { logIt(txt, 'q'); return bot('Atendemos de ' + NEG.horario + '.'); }
+  if (/despacho|delivery|envio|domicilio|llevan/.test(t)) { logIt(txt, 'q'); return bot(NEG.despacho); }
+  if (/precio|cuanto|valor|cuesta|vale/.test(t)) { logIt(txt, 'q'); return bot('Nuestras tortas cuestan:<ul>' + NEG.tamanos.map(function (x) { return '<li>' + x[0] + ': ' + $(x[1]) + '</li>'; }).join('') + '</ul>¿Quieres encargar una?', ['Quiero encargar una torta', '¿Qué sabores tienen?']); }
+  if (/sabor|tienen/.test(t)) { logIt(txt, 'q'); return bot('Tenemos ' + NEG.sabores.join(', ') + '. También hacemos versiones sin azúcar por encargo.', ['Quiero encargar una torta']); }
+  if (/pago|pagar|transfer|tarjeta|efectivo/.test(t)) { logIt(txt, 'q'); return bot(NEG.pagos); }
+  if (/donde|direccion|ubica|local/.test(t)) { logIt(txt, 'q'); return bot('Estamos en ' + NEG.direccion + '.'); }
+  if (/persona|humano|hablar|reclamo|ayuda/.test(t)) { logIt(txt, 'h'); return bot('Claro, le aviso ahora a una persona del equipo y te escribe por este mismo chat en unos minutos 🙌'); }
+  if (/hola|buenas|buenos/.test(t)) return bot('¡Hola! Soy el asistente virtual de ' + NEG.nombre + '. ¿En qué te ayudo?');
+  if (/gracias/.test(t)) return bot('¡A ti! Que tengas un lindo día 🧁');
+  logIt(txt, 'h');
+  return bot('No estoy seguro de entender. Le paso tu mensaje a una persona del equipo para que te responda. Mientras, ¿te ayudo con algo de esto?');
+}
+function send(txt) { txt = txt.trim(); if (!txt) return; add(esc(txt), true); reply(txt); }
+document.getElementById('comp').addEventListener('submit', function (e) { e.preventDefault(); var i = document.getElementById('ask'); send(i.value); i.value = ''; });
+document.getElementById('quick').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) send(b.textContent); });
+add('¡Hola! 👋 Soy el asistente virtual de <b>Pastelería Dulce Hogar</b>. Puedo contarte precios y horarios, o tomar tu pedido de torta. ¿En qué te ayudo?');
+setQuick(DEFAULT);
+</script>
+
+</html>
