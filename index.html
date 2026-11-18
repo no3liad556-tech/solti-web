@@ -460,13 +460,13 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
           <button class="btn btn-ink" type="button" data-film="web"><svg class="play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Ver demo</button>
         </article>
         <article class="build">
-          <h3>Menú digital con QR</h3>
-          <p>Tu carta con fotos y precios en el celular de cada cliente. Pide desde la mesa y el pedido llega directo a la cocina o la caja.</p>
+          <h3>Carta digital y pedidos</h3>
+          <p>Desde una carta con QR hasta un sistema donde los pedidos llegan directo a la cocina. Elegimos el nivel según tu local.</p>
           <button class="btn btn-ink" type="button" data-film="menu"><svg class="play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Ver demo</button>
         </article>
         <article class="build">
           <h3>Asistente con inteligencia artificial</h3>
-          <p>Responde las preguntas de tus clientes y agenda horas a cualquier hora, también de noche y en fin de semana.</p>
+          <p>Atiende a tus clientes por WhatsApp o en tu página, revisa tu agenda y reserva la hora que elijan. La reserva queda guardada al instante en tu agenda, también de noche y en fin de semana.</p>
           <button class="btn btn-ink" type="button" data-film="ia"><svg class="play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Ver demo</button>
         </article>
         <article class="build">
@@ -766,11 +766,11 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
   <div class="abs" style="left:400px;top:150px;width:280px" data-in="0" data-out="9.6">
     <div class="clock up" data-in="0.2">02:14</div>
     <p class="f-title up" style="font-size:28px;margin-top:14px" data-in="0.6">El local está cerrado. El asistente no.</p>
-    <p class="f-label up" style="margin-top:14px" data-in="1">Responde preguntas y agenda horas con la información de tu negocio.</p>
+    <p class="f-label up" style="margin-top:14px" data-in="1">Revisa tu agenda, ofrece solo las horas libres y reserva la que el cliente elija.</p>
   </div>
   <div class="abs" style="left:400px;top:70px;width:290px" data-in="9.6">
-    <div class="f-title up" style="font-size:30px;margin-bottom:6px" data-in="9.6">Agenda de mañana</div>
-    <p class="f-label up" style="margin:0 0 18px" data-in="9.8">Actualizada sola</p>
+    <div class="f-title up" style="font-size:30px;margin-bottom:6px" data-in="9.6">Tu agenda de mañana</div>
+    <p class="f-label up" style="margin:0 0 18px" data-in="9.8">La reserva quedó guardada sola</p>
     <div class="slot up" data-in="10"><b>10:00</b><span class="muted">Disponible</span></div>
     <div class="up" data-in="10.2"><div class="slot swap" data-flag="11.4"><b>12:30</b><span class="muted sa">Disponible</span><span class="sb"><b>Camila R.</b><br><span style="font-size:17px">Limpieza facial</span></span></div></div>
     <div class="slot up" data-in="10.4"><b>17:00</b><span class="muted">Disponible</span></div>
@@ -803,8 +803,8 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
   var FILMS = {
     impi: { title: 'Sistema de gestión', dur: 18.5, caps: [[0, 'Escribes la venta como hablas.'], [4.6, 'El sistema la registra con abono y saldo.'], [9, 'La producción avanza y el cliente recibe el aviso.'], [13.6, 'Y la contabilidad se hace sola.']] },
     web: { title: 'Sitio web', dur: 16, caps: [[0, 'Tu negocio con página propia.'], [5.4, 'Se ve bien en el celular.'], [10.2, 'Y el cliente te escribe directo a WhatsApp.']] },
-    menu: { title: 'Menú digital con QR', dur: 18.5, caps: [[0, 'El cliente escanea el código de la mesa.'], [4.4, 'Elige desde su celular.'], [10.4, 'El pedido llega directo a la cocina o la caja.'], [14.6, 'Y el cliente ve cuándo va camino a su mesa.']] },
-    ia: { title: 'Asistente con inteligencia artificial', dur: 15, caps: [[0, 'Un cliente escribe a las 2 de la mañana.'], [3.4, 'El asistente responde y ofrece horas.'], [9.6, 'La hora queda en tu agenda, sin que hagas nada.']] }
+    menu: { title: 'Carta digital y pedidos', dur: 18.5, caps: [[0, 'El cliente escanea el código de la mesa.'], [4.4, 'Elige desde su celular.'], [10.4, 'El pedido llega directo a la cocina o la caja.'], [14.6, 'Y el cliente ve cuándo va camino a su mesa.']] },
+    ia: { title: 'Asistente con inteligencia artificial', dur: 15, caps: [[0, 'Un cliente escribe a las 2 de la mañana.'], [3.4, 'El asistente revisa tu agenda y ofrece solo horas libres.'], [9.6, 'La reserva queda en tu agenda, sin que hagas nada.']] }
   };
   var dlg = document.getElementById('player'); if (!dlg || !dlg.showModal) return;
   var stage = document.getElementById('stage'), screen = document.getElementById('screen');
