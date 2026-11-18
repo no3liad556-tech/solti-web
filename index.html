@@ -186,6 +186,19 @@ h3 { font-size: clamp(24px, 2.6vw, 32px); font-variation-settings: "wdth" 80; fo
 .foot-bar svg { height: 40px; width: auto; }
 .foot-bar small { color: #9FAED0; font-size: 14px; }
 
+
+/* Suscripción */
+.news { margin-top: 56px; padding-top: 40px; border-top: 1px solid rgba(255,255,255,.16); max-width: 640px; }
+.news h3 { color: #fff; font-size: clamp(24px, 3vw, 30px); }
+.news p { margin: 10px 0 0; }
+.news-row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+.news input { flex: 1 1 240px; min-height: 52px; padding: 0 16px; border-radius: 10px; border: 2px solid rgba(255,255,255,.3); background: rgba(255,255,255,.06); color: #fff; font: 500 17px var(--f); }
+.news input::placeholder { color: #9FAED0; }
+.news input:focus { outline: none; border-color: var(--gold); }
+.news-msg { min-height: 1.4em; font-weight: 600; }
+.news-msg.ok { color: #9BE3B9 !important; } .news-msg.err { color: #FFB4A6 !important; }
+.news-fine { font-size: 14px; color: #9FAED0 !important; }
+
 /* WhatsApp flotante */
 .wa-float { position: fixed; right: max(16px, env(safe-area-inset-right)); bottom: max(16px, env(safe-area-inset-bottom)); z-index: 40; width: 58px; height: 58px; border-radius: 50%; background: var(--wa); display: grid; place-items: center; box-shadow: 0 10px 24px rgba(0,0,0,.25); }
 .wa-float svg { width: 30px; height: 30px; fill: #fff; }
@@ -502,7 +515,7 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
       <div class="ctas">
         <a class="btn btn-gold" href="https://wa.me/56973020975?text=Hola%20Soltic%2C%20quiero%20conversar%20sobre%20mi%20negocio%20para%20ver%20si%20me%20pueden%20ayudar." target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Escríbenos por WhatsApp</a>
       </div>
-      <p class="contact">O escríbenos directo al <a href="https://wa.me/56973020975?text=Hola%20Soltic%2C%20quiero%20conversar%20sobre%20mi%20negocio%20para%20ver%20si%20me%20pueden%20ayudar." target="_blank" rel="noopener">+56 9 7302 0975</a>.</p>
+      <p class="contact">¿Prefieres hablar por teléfono? <a href="tel:+56973020975">Llámanos al +56 9 7302 0975</a>.</p>
     </div>
   </section>
 </main>
@@ -862,6 +875,27 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
   dlg.addEventListener('click', function (e) { if (e.target === dlg) dlg.close(); });
   dlg.addEventListener('close', function () { pause(); stage.innerHTML = ''; items = []; if (opener) opener.focus(); });
   document.addEventListener('visibilitychange', function () { if (document.hidden && playing) pause(); });
+})();
+
+// Suscripción a novedades (MailerLite)
+(function () {
+  var f = document.getElementById('news'); if (!f) return;
+  var msg = document.getElementById('news-msg'), input = document.getElementById('news-email'), btn = f.querySelector('button');
+  f.addEventListener('submit', function (e) {
+    e.preventDefault();
+    msg.className = 'news-msg';
+    if (!input.value || !input.checkValidity()) { msg.textContent = 'Escribe un correo válido, por ejemplo nombre@gmail.com.'; msg.classList.add('err'); input.focus(); return; }
+    btn.disabled = true; msg.textContent = 'Enviando…';
+    var data = new FormData(); data.append('fields[email]', input.value.trim()); data.append('ml-submit', '1'); data.append('anticsrf', 'true');
+    fetch(f.action, { method: 'POST', body: data })
+      .then(function (r) { return r.json(); })
+      .then(function (j) {
+        if (j && j.success) { msg.textContent = 'Listo. Revisa tu correo y confirma la suscripción.'; msg.classList.add('ok'); f.reset(); }
+        else throw new Error('rechazado');
+      })
+      .catch(function () { msg.textContent = 'No pudimos guardar tu correo. Inténtalo de nuevo en un rato o escríbenos por WhatsApp.'; msg.classList.add('err'); })
+      .then(function () { btn.disabled = false; });
+  });
 })();
 
 </script>
