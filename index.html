@@ -507,7 +507,7 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
         <div class="trade"><dt>Clínicas, estética y peluquerías</dt><dd>Horas perdidas, inasistencias y una agenda que vive en un cuaderno.</dd></div>
         <div class="trade"><dt>Constructoras y contratistas</dt><dd>Presupuestos lentos, gastos por obra sin control y cobros atrasados.</dd></div>
         <div class="trade"><dt>Imprentas y talleres gráficos</dt><dd>Cotizaciones, abonos y producción desordenados. Aquí nació IMPI IA.</dd></div>
-        <div class="trade"><dt>Gimnasios y centros deportivos</dt><dd>Socios que dejan de pagar sin que nadie lo note, clases llenas o vacías y la entrada controlada a mano.</dd><dd class="trade-demo"><button class="link-btn" type="button" data-film="gym"><svg class="play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Ver un ejemplo</button></dd></div>
+        <div class="trade"><dt>Gimnasios y centros deportivos</dt><dd>Socios que dejan de pagar sin que nadie lo note y que se van porque no ven avances. Una app con tu marca les muestra su plan, su rutina y su progreso.</dd><dd class="trade-demo"><button class="link-btn" type="button" data-film="gym"><svg class="play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Ver un ejemplo</button></dd></div>
       </dl>
       <p class="trades-more">¿Tu rubro no está en la lista? <a href="https://wa.me/56973020975?text=Hola%20Soltic%2C%20quiero%20conversar%20sobre%20mi%20negocio%20para%20ver%20si%20me%20pueden%20ayudar." target="_blank" rel="noopener">Igual conversemos.</a></p>
     </div>
@@ -810,59 +810,112 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
 </div>
 </template>
 
-<!-- ============ Gimnasio (ejemplo de sistema a medida) ============ -->
+<!-- ============ Gimnasio: app para socios (ejemplo) ============ -->
+<style>
+.phone .scr.gx { background: #121418; color: #F3F4F6; }
+.gx .acc { color: #FF6B2C; }
+.gx-top { padding: 18px 18px 6px; display: flex; justify-content: space-between; align-items: center; }
+.gx-brand { font-weight: 850; font-size: 17px; letter-spacing: .02em; }
+.gx-brand i { font-style: normal; color: #FF6B2C; }
+.gx-card { background: #1D2027; border-radius: 16px; padding: 14px 16px; margin: 10px 14px; }
+.gx-card small { display: block; color: #9AA0AC; font-size: 14px; }
+.gx-big { font-weight: 800; font-size: 26px; line-height: 1.1; }
+.gx-pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 13px; font-weight: 700; background: #173A2A; color: #6EE7A8; }
+.gx-btn { display: block; text-align: center; background: #FF6B2C; color: #fff; font-weight: 800; border-radius: 12px; padding: 12px; font-size: 17px; margin: 10px 14px; }
+.gx-tabs { position: absolute; left: 0; right: 0; bottom: 0; display: flex; justify-content: space-around; padding: 10px 6px 14px; background: #0C0E11; font-size: 12px; color: #7C8290; }
+.gx-tabs span { text-align: center; }
+.gx-tabs span b { display: block; width: 22px; height: 4px; margin: 0 auto 5px; border-radius: 4px; background: #2A2E37; }
+.gx-tabs span.on2 { color: #FF6B2C; } .gx-tabs span.on2 b { background: #FF6B2C; }
+.gx-ex { display: flex; justify-content: space-between; align-items: center; padding: 11px 0; border-bottom: 1px solid #262A33; font-size: 16px; }
+.gx-ex small { display: block; color: #9AA0AC; font-size: 13px; }
+.gx-chk { width: 26px; height: 26px; border-radius: 8px; border: 2px solid #3A3F4B; display: grid; place-items: center; font-size: 15px; font-weight: 900; }
+.gx-chk.hit { background: #FF6B2C; border-color: #FF6B2C; color: #fff; }
+.gx-bars { display: flex; align-items: flex-end; gap: 10px; height: 110px; padding: 6px 4px 0; }
+.gx-bars i { flex: 1; background: #2A2E37; border-radius: 6px 6px 2px 2px; }
+.gx-bars i.hi { background: #FF6B2C; }
+.gx-qr { width: 190px; height: 190px; margin: 6px auto 0; background:
+  conic-gradient(from 90deg at 30% 30%, #121418 25%, transparent 0) 0 0 / 30px 30px, #fff; border: 12px solid #fff; border-radius: 12px; }
+</style>
 <template id="f-gym">
 <div class="film">
-  <!-- Celular del socio -->
   <div class="abs" style="left:40px;top:50px">
-    <div class="phone"><div class="scr">
-      <!-- 1. Pase de entrada con QR -->
-      <div class="abs" style="inset:0;background:#10131A;color:#fff;padding:26px 22px;text-align:center" data-in="0" data-out="6.2">
-        <div style="font-weight:800;font-size:20px">Gimnasio Fuerza Norte</div>
-        <p style="margin:6px 0 22px;font-size:16px;opacity:.75">Tu pase de entrada</p>
-        <div class="qr" style="margin:0 auto;width:170px;height:170px"></div>
-        <div style="margin-top:22px;font-weight:700;font-size:21px">Carla Muñoz</div>
-        <div style="font-size:16px;opacity:.75">Plan mensual</div>
-      </div>
-      <!-- 2. Aviso de pago por WhatsApp -->
-      <div class="abs" style="inset:0" data-in="6.2" data-out="11">
-        <div class="wa-head"><span>Gimnasio Fuerza Norte</span><small>avisos</small></div>
-        <div class="wa-body">
-          <div class="bubble in-msg" data-in="6.6">Hola Diego, tu plan venció el 17 nov. Renuévalo aquí y sigue entrenando: <b>$25.000</b><br><span class="f-btn" style="margin-top:8px;font-size:16px;padding:8px 14px" data-press="8.4">Pagar</span></div>
-          <div class="bubble in-msg" data-in="9.2">¡Pago recibido! Tu plan queda vigente hasta el 20 dic 💪</div>
+    <div class="phone"><div class="scr gx">
+
+      <!-- 1. Inicio -->
+      <div class="abs" style="inset:0" data-in="0" data-out="4.2">
+        <div class="gx-top"><span class="gx-brand">FUERZA<i>NORTE</i></span><span style="font-size:14px;color:#9AA0AC">Hola, Carla</span></div>
+        <div class="gx-card up" data-in="0.3"><small>Tu plan</small><div class="gx-big">Mensual</div><div style="margin-top:6px"><span class="gx-pill">Activo</span> <span style="font-size:14px;color:#9AA0AC">vence el 12 dic</span></div></div>
+        <div style="display:flex;gap:0">
+          <div class="gx-card up" data-in="0.6" style="flex:1;margin-right:5px"><small>Este mes</small><div class="gx-big acc">14</div><small>visitas</small></div>
+          <div class="gx-card up" data-in="0.8" style="flex:1;margin-left:5px"><small>Racha</small><div class="gx-big">5</div><small>días seguidos</small></div>
         </div>
+        <div class="gx-btn up" data-in="1.1" data-press="3.6">Mi código de acceso</div>
+        <div class="gx-tabs"><span class="on2"><b></b>Inicio</span><span><b></b>Clases</span><span><b></b>Rutina</span><span><b></b>Progreso</span></div>
       </div>
-      <!-- 3. Reserva de clase -->
-      <div class="abs" style="inset:0;background:#F4F6FA" data-in="11">
-        <div style="padding:18px 16px 8px;font-weight:800;font-size:21px">Clases de hoy</div>
-        <div style="padding:0 16px">
-          <div class="menu-item"><div>Funcional 18:00<small>Cupo lleno</small></div><span class="chip chip-red" style="font-size:14px">20/20</span></div>
-          <div class="menu-item"><div>Spinning 19:00<small>Quedan 2 cupos</small></div><span class="f-btn swap" data-flag="12.4" style="font-size:15px;padding:8px 12px" data-press="12"><span class="sa">Reservar</span><span class="sb">Reservado ✓</span></span></div>
-          <div class="menu-item"><div>Yoga 20:00<small>Quedan 8 cupos</small></div><span class="f-btn" style="font-size:15px;padding:8px 12px;background:#fff;color:var(--ink);border:2px solid var(--ink)">Reservar</span></div>
+
+      <!-- 2. Acceso con QR -->
+      <div class="abs" style="inset:0;text-align:center" data-in="4.2" data-out="7.6">
+        <div class="gx-top"><span class="gx-brand">FUERZA<i>NORTE</i></span><span></span></div>
+        <p style="margin:18px 0 4px;font-size:16px;color:#9AA0AC">Muestra este código en la entrada</p>
+        <div class="gx-qr"></div>
+        <div class="pop" data-in="5.8" style="margin:22px 14px 0;background:#173A2A;color:#6EE7A8;border-radius:14px;padding:14px;font-weight:800;font-size:19px">✓ Acceso permitido<br><span style="font-weight:500;font-size:14px">Bienvenida, Carla</span></div>
+      </div>
+
+      <!-- 3. Clases -->
+      <div class="abs" style="inset:0" data-in="7.6" data-out="11.4">
+        <div class="gx-top"><span style="font-weight:800;font-size:20px">Clases de hoy</span><span></span></div>
+        <div class="gx-card"><div class="gx-ex" style="border:0;padding:0"><div>Funcional 18:00<small>Cupo lleno</small></div><span style="font-size:13px;color:#F87171;font-weight:700">20/20</span></div></div>
+        <div class="gx-card"><div class="gx-ex" style="border:0;padding:0"><div>Spinning 19:00<small class="swap" data-flag="9.4"><span class="sa">Quedan 2 cupos</span><span class="sb">Tu lugar: bicicleta 7</span></small></div><span class="gx-pill swap" data-flag="9.4" data-press="9" style="background:#FF6B2C;color:#fff;padding:7px 12px"><span class="sa">Reservar</span><span class="sb">Reservado ✓</span></span></div></div>
+        <div class="gx-card"><div class="gx-ex" style="border:0;padding:0"><div>Yoga 20:00<small>Quedan 8 cupos</small></div><span class="gx-pill" style="background:#2A2E37;color:#F3F4F6;padding:7px 12px">Reservar</span></div></div>
+        <div class="gx-tabs"><span><b></b>Inicio</span><span class="on2"><b></b>Clases</span><span><b></b>Rutina</span><span><b></b>Progreso</span></div>
+      </div>
+
+      <!-- 4. Rutina -->
+      <div class="abs" style="inset:0" data-in="11.4" data-out="15.6">
+        <div class="gx-top"><span style="font-weight:800;font-size:20px">Rutina de hoy</span><span style="font-size:13px;color:#9AA0AC">Piernas</span></div>
+        <div class="gx-card" style="padding-top:4px;padding-bottom:4px">
+          <div class="gx-ex"><div>Sentadilla<small>4 × 10 · 40 kg</small></div><span class="gx-chk swap" data-flag="12.2"><span class="sb">✓</span></span></div>
+          <div class="gx-ex"><div>Prensa<small>4 × 12 · 90 kg</small></div><span class="gx-chk swap" data-flag="13"><span class="sb">✓</span></span></div>
+          <div class="gx-ex"><div>Estocadas<small>3 × 12 · 10 kg</small></div><span class="gx-chk swap" data-flag="13.8"><span class="sb">✓</span></span></div>
+          <div class="gx-ex" style="border:0"><div>Gemelos<small>4 × 15</small></div><span class="gx-chk"></span></div>
         </div>
+        <p class="up" data-in="14.4" style="margin:6px 18px;font-size:14px;color:#9AA0AC">Rutina preparada por tu profe, Matías.</p>
+        <div class="gx-tabs"><span><b></b>Inicio</span><span><b></b>Clases</span><span class="on2"><b></b>Rutina</span><span><b></b>Progreso</span></div>
+      </div>
+
+      <!-- 5. Progreso y pago -->
+      <div class="abs" style="inset:0" data-in="15.6">
+        <div class="gx-top"><span style="font-weight:800;font-size:20px">Tu progreso</span><span></span></div>
+        <div class="gx-card"><small>Visitas por mes</small>
+          <div class="gx-bars"><i style="height:40%"></i><i style="height:55%"></i><i style="height:48%"></i><i style="height:72%"></i><i class="hi" style="height:90%"></i></div>
+          <div style="display:flex;justify-content:space-between;font-size:12px;color:#7C8290;margin-top:6px"><span>jul</span><span>ago</span><span>sep</span><span>oct</span><span>nov</span></div>
+        </div>
+        <div class="gx-card up" data-in="16.6"><small>Próximo pago</small><div style="display:flex;justify-content:space-between;align-items:center"><div class="gx-big" style="font-size:22px">$25.000</div><span class="gx-pill" style="background:#FF6B2C;color:#fff;padding:7px 14px">Pagar</span></div><small>12 de diciembre</small></div>
+        <div class="gx-tabs"><span><b></b>Inicio</span><span><b></b>Clases</span><span><b></b>Rutina</span><span class="on2"><b></b>Progreso</span></div>
       </div>
     </div></div>
   </div>
 
-  <!-- Pantalla del gimnasio -->
-  <div class="abs" style="left:400px;top:70px;width:290px" data-in="0" data-out="6.2">
-    <div class="f-title up" style="font-size:30px;margin-bottom:6px" data-in="0.3">Recepción</div>
-    <p class="f-label up" style="margin:0 0 16px" data-in="0.5">Cada socio entra con su QR</p>
-    <div class="slot pop" data-in="1.6" style="display:block"><b style="width:auto">Carla M.</b> <span class="chip chip-ok" style="float:right;font-size:14px">Al día</span><br><span style="font-size:16px" class="muted">Plan vigente hasta el 12 dic</span></div>
-    <div class="slot pop" data-in="3.4" style="display:block;border-color:#F0B4AA"><b style="width:auto">Diego R.</b> <span class="chip chip-red" style="float:right;font-size:14px">Vencido</span><br><span style="font-size:16px" class="muted">Venció hace 3 días</span></div>
-    <p class="up" data-in="4.6" style="margin-top:4px"><span class="chip chip-gold">Aviso de pago enviado</span></p>
+  <!-- Textos a la derecha -->
+  <div class="abs" style="left:400px;top:170px;width:285px" data-in="0" data-out="4.2">
+    <div class="f-title up" style="font-size:30px" data-in="0.2">Tu gimnasio en el celular de cada socio</div>
+    <p class="f-label up" style="margin-top:14px" data-in="0.6">Con tu logo y tus colores. Cada socio ve su plan, sus visitas y su racha.</p>
   </div>
-  <div class="abs" style="left:400px;top:150px;width:285px" data-in="6.2" data-out="11">
-    <div class="f-title up" style="font-size:30px" data-in="6.4">Cobra sin perseguir a nadie</div>
-    <p class="f-label up" style="margin-top:14px" data-in="6.8">El aviso sale solo cuando un plan vence, y el pago queda registrado.</p>
-    <p class="up" data-in="9.4" style="margin-top:18px"><span class="chip chip-ok">Diego R. al día</span></p>
+  <div class="abs" style="left:400px;top:190px;width:285px" data-in="4.2" data-out="7.6">
+    <div class="f-title up" style="font-size:30px" data-in="4.3">Entra con su código</div>
+    <p class="f-label up" style="margin-top:14px" data-in="4.6">Sin tarjeta ni cuaderno. Si el plan está vencido, la entrada lo avisa.</p>
   </div>
-  <div class="abs" style="left:400px;top:70px;width:290px" data-in="11">
-    <div class="f-title up" style="font-size:30px;margin-bottom:16px" data-in="11.1">Noviembre</div>
-    <div class="slot up" data-in="11.3" style="display:block"><span class="muted" style="font-size:16px">Spinning 19:00</span><br><b class="swap" data-flag="12.4" style="width:auto"><span class="sa">18 de 20 cupos</span><span class="sb">19 de 20 cupos</span></b></div>
-    <div class="row up" data-in="13"><span class="muted">Socios activos</span><b>142</b></div>
-    <div class="row up" data-in="13.4"><span class="muted">Vencen esta semana</span><b>9</b></div>
-    <div class="row up" data-in="13.8"><span class="muted">Ingresos</span><b data-in="13.8" data-count="3550000"></b></div>
+  <div class="abs" style="left:400px;top:190px;width:285px" data-in="7.6" data-out="11.4">
+    <div class="f-title up" style="font-size:30px" data-in="7.7">Reserva su clase</div>
+    <p class="f-label up" style="margin-top:14px" data-in="8">Tú ves cuántos cupos quedan y quién viene.</p>
+  </div>
+  <div class="abs" style="left:400px;top:190px;width:285px" data-in="11.4" data-out="15.6">
+    <div class="f-title up" style="font-size:30px" data-in="11.5">Sigue su rutina</div>
+    <p class="f-label up" style="margin-top:14px" data-in="11.8">El profe la arma y el socio marca cada ejercicio.</p>
+  </div>
+  <div class="abs" style="left:400px;top:190px;width:285px" data-in="15.6">
+    <div class="f-title up" style="font-size:30px" data-in="15.7">Ve su avance y paga desde la app</div>
+    <p class="f-label up" style="margin-top:14px" data-in="16">Un socio que ve su progreso se queda más tiempo.</p>
   </div>
 </div>
 </template>
@@ -892,7 +945,7 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
     impi: { title: 'Sistema de gestión', dur: 18.5, caps: [[0, 'Escribes la venta como hablas.'], [4.6, 'El sistema la registra con abono y saldo.'], [9, 'La producción avanza y el cliente recibe el aviso.'], [13.6, 'Y la contabilidad se hace sola.']] },
     web: { title: 'Sitio web', dur: 16, caps: [[0, 'Tu negocio con página propia.'], [5.4, 'Se ve bien en el celular.'], [10.2, 'Y el cliente te escribe directo a WhatsApp.']] },
     menu: { title: 'Carta digital y pedidos', dur: 18.5, caps: [[0, 'El cliente escanea el código de la mesa.'], [4.4, 'Elige desde su celular.'], [10.4, 'El pedido llega directo a la cocina o la caja.'], [14.6, 'Y el cliente ve cuándo va camino a su mesa.']] },
-    gym: { title: 'Ejemplo: sistema para gimnasios', dur: 16.5, caps: [[0, 'Cada socio entra con su código QR.'], [3.4, 'Si su plan venció, el sistema lo detecta en la entrada.'], [6.2, 'Le llega el aviso de pago por WhatsApp y paga en línea.'], [11, 'Los socios reservan su clase y tú ves cómo va el mes.']] },
+    gym: { title: 'Ejemplo: app para socios de gimnasio', dur: 19.5, caps: [[0, 'Cada socio tiene su gimnasio en el celular.'], [4.2, 'Entra con su código QR.'], [7.6, 'Reserva su clase en segundos.'], [11.4, 'Sigue la rutina que le preparó su profe.'], [15.6, 'Ve su progreso y paga su plan desde la app.']] },
     ia: { title: 'Asistente con inteligencia artificial', dur: 15, caps: [[0, 'Un cliente escribe a las 2 de la mañana.'], [3.4, 'El asistente revisa tu agenda y ofrece solo horas libres.'], [9.6, 'La reserva queda en tu agenda, sin que hagas nada.']] }
   };
   var dlg = document.getElementById('player'); if (!dlg || !dlg.showModal) return;
