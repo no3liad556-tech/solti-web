@@ -68,7 +68,7 @@ p { margin: 0; }
 @media (max-width: 900px) { .hero .wrap { grid-template-columns: minmax(0, 1fr); } }
 
 /* El objeto: hexágono de vidrio + circuito de oro + esfera */
-.obj { position: relative; aspect-ratio: 1; width: min(100%, 460px); justify-self: center; margin-bottom: 230px; }
+.obj { position: relative; aspect-ratio: 1; width: min(100%, 460px); justify-self: center; }
 .orb { position: absolute; width: 46%; aspect-ratio: 1; right: -10%; top: -8%; border-radius: 50%;
   background: radial-gradient(circle at 32% 28%, #FFF6D6 0%, #FFE08A 14%, #F5C94A 34%, #B98A12 70%, #6E4E05 100%);
   box-shadow: inset -18px -24px 50px rgba(60,35,0,.55), 0 40px 80px -20px rgba(245,201,74,.45); }
@@ -115,6 +115,53 @@ p { margin: 0; }
 .c-otro { grid-column: span 6; min-height: 0; flex-direction: row; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; background: rgba(245,201,74,.08); border-color: rgba(245,201,74,.3); }
 @media (max-width: 900px) { .bento { grid-template-columns: minmax(0, 1fr); } .bento .cell { grid-column: auto; min-height: 200px; } .c-impi .big { font-size: 150px; } }
 
+
+/* Antes y después + la cuenta, juntos */
+:root{--navy:#0B1F4A;--gold:#F5C94A;--muted:#A9B8DA;--f-mono:"IBM Plex Mono",monospace;}
+/* Antes y después deslizable */
+.cmp { position: relative; width: 100%; aspect-ratio: 1000 / 560; border-radius: 22px; overflow: hidden; box-shadow: 0 24px 50px rgba(11,31,74,.18); user-select: none; -webkit-user-select: none; touch-action: pan-y; }
+.cmp .scene { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.before-layer { position: absolute; inset: 0; clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+.cmp-handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 0; pointer-events: none; }
+.cmp-handle::before { content: ""; position: absolute; top: 0; bottom: 0; left: -2px; width: 4px; background: #FFFFFF; box-shadow: 0 0 0 1px rgba(11,31,74,.15); }
+.knob { position: absolute; top: 50%; left: 0; width: 56px; height: 56px; transform: translate(-50%, -50%); border-radius: 50%; background: var(--gold); display: grid; place-items: center; box-shadow: 0 6px 18px rgba(0,0,0,.3); border: 3px solid #FFFFFF; }
+.knob svg { width: 26px; height: 26px; fill: none; stroke: var(--navy); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.cmp-range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
+.cmp:has(.cmp-range:focus-visible) .knob { outline: 3px solid var(--navy); outline-offset: 3px; }
+.cmp-tag { position: absolute; top: 16px; font-family: var(--f-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; padding: 6px 12px; border-radius: 999px; pointer-events: none; }
+.cmp-before { left: 16px; background: #FFFFFF; color: #5B5446; }
+.cmp-after { right: 16px; background: var(--gold); color: var(--navy); }
+.cmp-note { margin-top: 14px; font-size: 14px; color: var(--muted); }
+.bill { animation: fly 3s ease-in infinite; opacity: 0; }
+.coin { animation: drop 2.4s ease-in infinite; opacity: 0; }
+@keyframes fly { 0% { transform: translate(0, 0); opacity: 0; } 15% { opacity: 1; } 100% { transform: translate(90px, -230px) rotate(30deg); opacity: 0; } }
+@keyframes drop { 0% { transform: translateY(-120px); opacity: 0; } 25% { opacity: 1; } 85% { transform: translateY(40px); opacity: 1; } 100% { transform: translateY(48px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .bill, .coin { animation: none; opacity: 1; } }
+@media (max-width: 620px) { .cmp { aspect-ratio: 4 / 3; border-radius: 16px; } .knob { width: 46px; height: 46px; } }
+.top .logo { display: inline-flex; align-items: center; text-decoration: none; }
+
+.ba { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); gap: 18px; margin-top: 40px; align-items: stretch; }
+.ba-slider .cmp { box-shadow: 0 0 0 1px rgba(255,255,255,.14), 0 30px 60px rgba(0,0,0,.4); }
+.ba-slider .cmp-tag { font-family: var(--f); letter-spacing: 0; text-transform: none; font-weight: 700; font-size: 14px; }
+.ba-slider .cmp-note { color: var(--niebla); }
+.tally { border-radius: 26px; padding: 24px; background: rgba(8,20,52,.6); border: 1px solid rgba(255,255,255,.14); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); font-family: var(--mono); font-size: 14.5px; color: var(--niebla); display: flex; flex-direction: column; transition: border-color .3s ease; }
+.tally-head { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-bottom: 14px; border-bottom: 1px dashed rgba(255,255,255,.22); }
+.tally-tag { font-family: var(--f); font-weight: 800; font-size: 15px; padding: 4px 12px; border-radius: 999px; background: rgba(255,255,255,.1); color: var(--blanco); }
+.tally-sub { font-size: 12.5px; }
+.tally-rows { padding: 10px 0; flex: 1; }
+.tally .r { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; }
+.tally .r > span:last-child { text-align: right; color: var(--blanco); }
+.tally b { font-weight: 600; }
+.tally-total { display: grid; grid-template-columns: 1fr auto; align-items: baseline; padding-top: 14px; border-top: 1px dashed rgba(255,255,255,.22); color: var(--blanco); }
+.tally-total strong { font-size: 24px; padding: 2px 10px; border-radius: 6px; }
+.tally-total strong.a { background: #4A1C22; color: #FFB4A6; }
+.tally-total strong.d { background: var(--oro); color: var(--tinta); }
+.tally-note { margin-top: 12px; font-size: 13px; }
+.tally[data-side="antes"] .d, .tally[data-side="despues"] .a { display: none; }
+.tally[data-side="despues"] { border-color: rgba(245,201,74,.45); }
+.tally[data-side="despues"] .tally-tag { background: var(--oro); color: var(--tinta); }
+@media (max-width: 900px) { .ba { grid-template-columns: minmax(0, 1fr); } }
+
 /* Cierre */
 .final { text-align: left; }
 .final .row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
@@ -154,13 +201,142 @@ p { margin: 0; }
           </svg>
         </div>
         <div class="orb small"></div>
-        <div class="ticket">
-          <b>Diagnóstico de ejemplo</b>
-          <span class="r"><span>Responder WhatsApp</span><span>$1.584.000</span></span>
-          <span class="r"><span>Cotizar a mano</span><span>$1.056.000</span></span>
-          <span class="r"><span>Cobrar y perseguir</span><span>$792.000</span></span>
-          <div class="t"><span>Total al año</span><strong>$7.152.000</strong></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec" id="antes-y-despues">
+    <div class="wrap">
+      <h2>Del cuaderno a un sistema.</h2>
+      <p class="lead">Desliza la flecha. A la izquierda, cómo se pierde la plata hoy. A la derecha, cuánto se recupera con un sistema.</p>
+      <div class="ba">
+        <div class="ba-slider"><div class="cmp" id="cmp" style="--pos:50%">
+        <!-- DESPUÉS (capa de fondo) -->
+        <svg class="scene" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+          <defs>
+            <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M40 0H0V40" fill="none" stroke="#173777" stroke-width="1"/></pattern>
+          </defs>
+          <rect width="1000" height="560" fill="#0B1F4A"/>
+          <rect width="1000" height="560" fill="url(#grid)" opacity=".6"/>
+          <!-- panel -->
+          <g transform="translate(70 60)">
+            <rect width="560" height="440" rx="20" fill="#FFFFFF"/>
+            <rect width="560" height="56" rx="20" fill="#13306B"/><rect y="36" width="560" height="20" fill="#13306B"/>
+            <text x="26" y="36" font-family="Archivo, sans-serif" font-weight="600" font-size="19" fill="#fff">Panel de ventas</text>
+            <text x="534" y="36" text-anchor="end" font-family="Archivo, sans-serif" font-size="15" fill="#F5C94A">Todo al día</text>
+            <text x="26" y="98" font-family="Archivo, sans-serif" font-size="16" fill="#4A587A">Ventas del mes</text>
+            <rect x="420" y="80" width="114" height="28" rx="14" fill="#D7F2E1"/>
+            <text x="477" y="99" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="600" font-size="14" fill="#146C3A">▲ Creciendo</text>
+            <g fill="#F5C94A">
+              <rect x="30" y="218" width="54" height="42" rx="6"/>
+              <rect x="104" y="196" width="54" height="64" rx="6"/>
+              <rect x="178" y="180" width="54" height="80" rx="6"/>
+              <rect x="252" y="160" width="54" height="100" rx="6"/>
+              <rect x="326" y="140" width="54" height="120" rx="6"/>
+              <rect x="400" y="122" width="54" height="138" rx="6" fill="#0B1F4A"/>
+              <rect x="474" y="118" width="54" height="142" rx="6" fill="#0B1F4A" class="grow"/>
+            </g>
+            <polyline points="57,212 131,190 205,174 279,154 353,134 427,116 501,108" fill="none" stroke="#1FA855" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+            <line x1="26" y1="262" x2="534" y2="262" stroke="#D9DFEC" stroke-width="2"/>
+            <g font-family="Archivo, sans-serif" font-size="16" fill="#0B1F4A">
+              <circle cx="40" cy="300" r="12" fill="#1FA855"/><path d="M34 300l4 4 8-8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <text x="62" y="306" font-weight="600">Pedido #1043</text><text x="534" y="306" text-anchor="end" fill="#146C3A">Pagado</text>
+              <line x1="26" y1="326" x2="534" y2="326" stroke="#EEF1F7" stroke-width="2"/>
+              <circle cx="40" cy="352" r="12" fill="#1FA855"/><path d="M34 352l4 4 8-8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <text x="62" y="358" font-weight="600">Boleta emitida</text><text x="534" y="358" text-anchor="end" fill="#146C3A">Enviada</text>
+              <line x1="26" y1="378" x2="534" y2="378" stroke="#EEF1F7" stroke-width="2"/>
+              <circle cx="40" cy="404" r="12" fill="#1FA855"/><path d="M34 404l4 4 8-8" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round"/>
+              <text x="62" y="410" font-weight="600">Stock de insumos</text><text x="534" y="410" text-anchor="end" fill="#146C3A">Al día</text>
+            </g>
+          </g>
+          <!-- caja que recibe -->
+          <g transform="translate(700 300)">
+            <path d="M40 -150 V-40" stroke="#F5C94A" stroke-width="3" stroke-dasharray="6 8" opacity=".6"/>
+            <path d="M110 -190 V-40" stroke="#F5C94A" stroke-width="3" stroke-dasharray="6 8" opacity=".6"/>
+            <path d="M180 -150 V-40" stroke="#F5C94A" stroke-width="3" stroke-dasharray="6 8" opacity=".6"/>
+            <g class="coin" style="animation-delay:0s"><circle cx="40" cy="-60" r="20" fill="#F5C94A" stroke="#C99A1E" stroke-width="3"/><text x="40" y="-53" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="700" font-size="20" fill="#0B1F4A">$</text></g>
+            <g class="coin" style="animation-delay:.8s"><circle cx="110" cy="-60" r="20" fill="#F5C94A" stroke="#C99A1E" stroke-width="3"/><text x="110" y="-53" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="700" font-size="20" fill="#0B1F4A">$</text></g>
+            <g class="coin" style="animation-delay:1.6s"><circle cx="180" cy="-60" r="20" fill="#F5C94A" stroke="#C99A1E" stroke-width="3"/><text x="180" y="-53" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="700" font-size="20" fill="#0B1F4A">$</text></g>
+            <rect x="0" y="-20" width="220" height="170" rx="22" fill="#13306B" stroke="#F5C94A" stroke-width="4"/>
+            <rect x="40" y="-6" width="140" height="12" rx="6" fill="#071433"/>
+            <text x="110" y="70" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="600" font-size="22" fill="#fff">Ventas</text>
+            <text x="110" y="100" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="600" font-size="22" fill="#fff">ingresando</text>
+            <path d="M110 128 l-14 14 M110 128 l14 14 M110 128 v-0" stroke="#1FA855" stroke-width="5" stroke-linecap="round" transform="rotate(180 110 135)"/>
+          </g>
+        </svg>
+
+        <!-- ANTES (capa de arriba, recortada) -->
+        <div class="before-layer">
+          <svg class="scene" viewBox="0 0 1000 560" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <rect width="1000" height="560" fill="#ECE7DD"/>
+            <!-- cuaderno -->
+            <g transform="translate(370 250) rotate(-6)">
+              <rect width="300" height="230" rx="8" fill="#FBF8F1" stroke="#CFC6B4" stroke-width="2"/>
+              <g stroke="#D6E1F0" stroke-width="2"><line x1="0" y1="60" x2="300" y2="60"/><line x1="0" y1="100" x2="300" y2="100"/><line x1="0" y1="140" x2="300" y2="140"/><line x1="0" y1="180" x2="300" y2="180"/></g>
+              <line x1="36" y1="0" x2="36" y2="230" stroke="#EFA8A8" stroke-width="2"/>
+              <g font-family="Caveat, 'Segoe Print', cursive" font-size="27" fill="#34405E">
+                <text x="48" y="52">Pedidos</text>
+                <text x="48" y="92">Juan ¿pagó?</text>
+                <text x="48" y="132">María · llamar</text>
+                <text x="48" y="172" fill="#C2412F">¡perdí el pedido!</text>
+              </g>
+            </g>
+            <!-- papeles sueltos -->
+            <g transform="translate(720 230) rotate(-8)">
+              <rect width="200" height="130" fill="#fff" stroke="#DDD6C8" stroke-width="2"/>
+              <text x="18" y="48" font-family="Caveat, 'Segoe Print', cursive" font-size="28" fill="#34405E">¿Cuánto vendí?</text>
+              <g stroke="#B8C0D0" stroke-width="3" stroke-linecap="round"><line x1="18" y1="78" x2="170" y2="78"/><line x1="18" y1="100" x2="130" y2="100"/></g>
+            </g>
+            <g transform="translate(760 390) rotate(9)">
+              <rect width="170" height="120" fill="#fff" stroke="#DDD6C8" stroke-width="2"/>
+              <g stroke="#B8C0D0" stroke-width="3" stroke-linecap="round"><line x1="16" y1="34" x2="150" y2="34"/><line x1="16" y1="58" x2="120" y2="58"/><line x1="16" y1="82" x2="140" y2="82"/></g>
+            </g>
+            <g transform="translate(400 60) rotate(7)">
+              <rect width="150" height="110" fill="#F7E08A"/>
+              <text x="14" y="46" font-family="Caveat, 'Segoe Print', cursive" font-size="26" fill="#7A3B12">Boletas</text>
+              <text x="14" y="80" font-family="Caveat, 'Segoe Print', cursive" font-size="26" fill="#C2412F">¿¿las hice??</text>
+            </g>
+            <!-- gráfico que cae -->
+            <g transform="translate(640 50)">
+              <rect width="190" height="120" rx="10" fill="#fff" stroke="#DDD6C8" stroke-width="2"/>
+              <text x="16" y="30" font-family="Archivo, sans-serif" font-size="15" fill="#7C869E">Ganancias</text>
+              <polyline points="20,50 60,62 95,58 130,86 170,100" fill="none" stroke="#C2412F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M170 100 l-14 -2 M170 100 l-4 -13" stroke="#C2412F" stroke-width="4" stroke-linecap="round"/>
+            </g>
+            <!-- caja abierta con plata escapando -->
+            <g transform="translate(80 320)">
+              <rect x="0" y="40" width="230" height="130" rx="12" fill="#8A93A6"/>
+              <rect x="-14" y="112" width="258" height="44" rx="8" fill="#A9B1C2"/>
+              <rect x="80" y="126" width="70" height="10" rx="5" fill="#6D768A"/>
+              <path d="M40 40 l18 40 l-10 20 l16 30" stroke="#5E6678" stroke-width="3" fill="none"/>
+              <g class="bill" style="animation-delay:0s"><g transform="translate(60 0) rotate(-14)"><rect width="78" height="40" rx="5" fill="#8CC79A" stroke="#4E8A57" stroke-width="3"/><text x="39" y="28" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="700" font-size="20" fill="#2F6B3A">$</text></g></g>
+              <g class="bill" style="animation-delay:1s"><g transform="translate(130 -10) rotate(12)"><rect width="78" height="40" rx="5" fill="#8CC79A" stroke="#4E8A57" stroke-width="3"/><text x="39" y="28" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="700" font-size="20" fill="#2F6B3A">$</text></g></g>
+              <g class="bill" style="animation-delay:2s"><g transform="translate(20 -20) rotate(-28)"><rect width="78" height="40" rx="5" fill="#8CC79A" stroke="#4E8A57" stroke-width="3"/><text x="39" y="28" text-anchor="middle" font-family="Archivo, sans-serif" font-weight="700" font-size="20" fill="#2F6B3A">$</text></g></g>
+              <text x="115" y="215" text-anchor="middle" font-family="Caveat, 'Segoe Print', cursive" font-size="30" fill="#C2412F">la plata se escapa…</text>
+            </g>
+          </svg>
         </div>
+
+        <span class="cmp-tag cmp-before">Antes</span>
+        <span class="cmp-tag cmp-after">Después</span>
+        <div class="cmp-handle" aria-hidden="true"><span class="knob"><svg viewBox="0 0 24 24"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></span></div>
+        <input class="cmp-range" type="range" min="0" max="100" value="50" id="cmp-range" aria-label="Deslizar para comparar antes y después">
+      </div>
+      <p class="cmp-note">Desliza la flecha hacia los lados. Ilustración de ejemplo.</p></div>
+        <aside class="tally" id="tally" data-side="antes" aria-live="polite">
+          <div class="tally-head"><span class="tally-tag" id="tally-tag">Antes</span><span class="tally-sub">Negocio de 5 personas, números de ejemplo</span></div>
+          <div class="tally-rows">
+            <div class="r"><span>Responder WhatsApp</span><span><b class="a">$1.584.000</b><b class="d">Lo responde el asistente</b></span></div>
+            <div class="r"><span>Cotizar a mano</span><span><b class="a">$1.056.000</b><b class="d">En 1 minuto</b></span></div>
+            <div class="r"><span>Cobrar y perseguir pagos</span><span><b class="a">$792.000</b><b class="d">Avisos automáticos</b></span></div>
+            <div class="r"><span>Otras tareas</span><span><b class="a">$3.720.000</b><b class="d">Ordenadas en etapas</b></span></div>
+          </div>
+          <div class="tally-total">
+            <span class="a">Se pierde al año</span><span class="d">Se recupera al año</span>
+            <strong class="a">$7.152.000</strong><strong class="d">$4.080.000</strong>
+          </div>
+          <p class="tally-note"><span class="a">Esto es lo que mide el diagnóstico.</span><span class="d">Con solo la primera etapa del sistema.</span></p>
+        </aside>
       </div>
     </div>
   </section>
@@ -190,5 +366,18 @@ p { margin: 0; }
 </main>
 <footer class="wrap foot"><span>© 2026 Soltic Soluciones Tecnológicas</span><span>Borrador de estilo. No es la página publicada.</span></footer>
 <div class="preview-flag">Vista previa del estilo “alta gama”</div>
+<script>
+(function () {
+  var cmp = document.getElementById('cmp'), rng = document.getElementById('cmp-range'), tally = document.getElementById('tally'), tag = document.getElementById('tally-tag');
+  if (!cmp || !rng) return;
+  function set() {
+    cmp.style.setProperty('--pos', rng.value + '%');
+    // El lado "después" ocupa la derecha: si la flecha deja ver más del después, la cuenta cambia.
+    var side = +rng.value < 50 ? 'despues' : 'antes';
+    if (tally.dataset.side !== side) { tally.dataset.side = side; tag.textContent = side === 'antes' ? 'Antes' : 'Después'; }
+  }
+  rng.addEventListener('input', set); set();
+})();
+</script>
 </body>
 </html>
