@@ -516,6 +516,20 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
         <a class="btn btn-gold" href="https://wa.me/56973020975?text=Hola%20Soltic%2C%20quiero%20conversar%20sobre%20mi%20negocio%20para%20ver%20si%20me%20pueden%20ayudar." target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Escríbenos por WhatsApp</a>
       </div>
       <p class="contact">¿Prefieres hablar por teléfono? <a href="tel:+56973020975">Llámanos al +56 9 7302 0975</a>. También puedes escribirnos a <a href="mailto:proyectos@soltic.cl">proyectos@soltic.cl</a>.</p>
+      <!--NEWS-->
+      <form class="news" id="news" action="https://be394068.sibforms.com/serve/MUIFALhdF2RzNK_QUPDE5XfM7YD-0Us7JSd6WxI1sr3TuDn1eOctMBQTDHASxs2qptZi-zHW2LWarbQA7uy4C9n7XFAKM2ixBsqHnCxrG_zEZ84yzUIEUBAgSsHK2LyfSPeHelQINRQvAf_MU9Ojc5zqVjAom7iQrr65onPJrGXUCZUUObpr5spHRMzx9NLhpKsVWW6m34sOKC2ttQ==" method="post" novalidate>
+        <h3 id="news-title">Recibe las novedades de Soltic</h3>
+        <p>Ideas para ordenar tu negocio y lo nuevo que vamos construyendo. Un correo al mes, como máximo.</p>
+        <div class="news-row">
+          <label class="sr" for="news-email">Tu correo</label>
+          <input id="news-email" name="EMAIL" type="email" autocomplete="email" required placeholder="tu@correo.cl">
+          <input id="news-check" name="email_address_check" type="text" value="" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0">
+          <button class="btn btn-gold" type="submit">Suscribirme</button>
+        </div>
+        <p class="news-msg" id="news-msg" role="status" aria-live="polite"></p>
+        <p class="news-fine">Puedes darte de baja cuando quieras desde cualquier correo.</p>
+      </form>
+      <!--/NEWS-->
     </div>
   </section>
 </main>
@@ -877,23 +891,23 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
   document.addEventListener('visibilitychange', function () { if (document.hidden && playing) pause(); });
 })();
 
-// Suscripción a novedades (MailerLite)
+// Suscripción a novedades (Brevo, con doble confirmación)
 (function () {
   var f = document.getElementById('news'); if (!f) return;
   var msg = document.getElementById('news-msg'), input = document.getElementById('news-email'), btn = f.querySelector('button');
+  var trap = document.getElementById('news-check');
   f.addEventListener('submit', function (e) {
     e.preventDefault();
     msg.className = 'news-msg';
-    if (!input.value || !input.checkValidity()) { msg.textContent = 'Escribe un correo válido, por ejemplo nombre@gmail.com.'; msg.classList.add('err'); input.focus(); return; }
+    var email = input.value.trim();
+    if (!email || !input.checkValidity() || !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) { msg.textContent = 'Escribe un correo válido, por ejemplo nombre@gmail.com.'; msg.classList.add('err'); input.focus(); return; }
     btn.disabled = true; msg.textContent = 'Enviando…';
-    var data = new FormData(); data.append('fields[email]', input.value.trim()); data.append('ml-submit', '1'); data.append('anticsrf', 'true');
-    fetch(f.action, { method: 'POST', body: data })
-      .then(function (r) { return r.json(); })
-      .then(function (j) {
-        if (j && j.success) { msg.textContent = 'Listo. Revisa tu correo y confirma la suscripción.'; msg.classList.add('ok'); f.reset(); }
-        else throw new Error('rechazado');
-      })
-      .catch(function () { msg.textContent = 'No pudimos guardar tu correo. Inténtalo de nuevo en un rato o escríbenos por WhatsApp.'; msg.classList.add('err'); })
+    var data = new FormData();
+    data.append('EMAIL', email); data.append('email_address_check', trap ? trap.value : ''); data.append('locale', 'es');
+    // Brevo no deja leer la respuesta desde otro sitio: se envía y se da por recibido.
+    fetch(f.action, { method: 'POST', body: data, mode: 'no-cors' })
+      .then(function () { msg.textContent = 'Listo. Te enviamos un correo para confirmar tu suscripción. Si no lo ves, revisa Spam.'; msg.classList.add('ok'); f.reset(); })
+      .catch(function () { msg.textContent = 'No pudimos enviar tu correo. Revisa tu conexión e inténtalo de nuevo.'; msg.classList.add('err'); })
       .then(function () { btn.disabled = false; });
   });
 })();
