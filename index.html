@@ -173,6 +173,9 @@ h3 { font-size: clamp(24px, 2.6vw, 32px); font-variation-settings: "wdth" 80; fo
 .trade dt { font-weight: 800; font-size: 21px; font-variation-settings: "wdth" 85; }
 .trade dd { margin: 6px 0 0; color: var(--muted); }
 .trades-more { margin-top: 30px; font-weight: 600; }
+.trade-demo { margin-top: 10px !important; }
+.link-btn { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0; border: 0; background: none; font: 700 16px/1 var(--f); color: var(--ink); text-decoration: underline; text-underline-offset: 4px; cursor: pointer; }
+.link-btn .play { width: 13px; height: 13px; fill: currentColor; }
 .trades-more a { color: var(--ink); }
 @media (max-width: 760px) { .trades { grid-template-columns: minmax(0, 1fr); } }
 
@@ -504,6 +507,7 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
         <div class="trade"><dt>Clínicas, estética y peluquerías</dt><dd>Horas perdidas, inasistencias y una agenda que vive en un cuaderno.</dd></div>
         <div class="trade"><dt>Constructoras y contratistas</dt><dd>Presupuestos lentos, gastos por obra sin control y cobros atrasados.</dd></div>
         <div class="trade"><dt>Imprentas y talleres gráficos</dt><dd>Cotizaciones, abonos y producción desordenados. Aquí nació IMPI IA.</dd></div>
+        <div class="trade"><dt>Gimnasios y centros deportivos</dt><dd>Socios que dejan de pagar sin que nadie lo note, clases llenas o vacías y la entrada controlada a mano.</dd><dd class="trade-demo"><button class="link-btn" type="button" data-film="gym"><svg class="play" viewBox="0 0 16 16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z"/></svg>Ver un ejemplo</button></dd></div>
       </dl>
       <p class="trades-more">¿Tu rubro no está en la lista? <a href="https://wa.me/56973020975?text=Hola%20Soltic%2C%20quiero%20conversar%20sobre%20mi%20negocio%20para%20ver%20si%20me%20pueden%20ayudar." target="_blank" rel="noopener">Igual conversemos.</a></p>
     </div>
@@ -806,6 +810,63 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
 </div>
 </template>
 
+<!-- ============ Gimnasio (ejemplo de sistema a medida) ============ -->
+<template id="f-gym">
+<div class="film">
+  <!-- Celular del socio -->
+  <div class="abs" style="left:40px;top:50px">
+    <div class="phone"><div class="scr">
+      <!-- 1. Pase de entrada con QR -->
+      <div class="abs" style="inset:0;background:#10131A;color:#fff;padding:26px 22px;text-align:center" data-in="0" data-out="6.2">
+        <div style="font-weight:800;font-size:20px">Gimnasio Fuerza Norte</div>
+        <p style="margin:6px 0 22px;font-size:16px;opacity:.75">Tu pase de entrada</p>
+        <div class="qr" style="margin:0 auto;width:170px;height:170px"></div>
+        <div style="margin-top:22px;font-weight:700;font-size:21px">Carla Muñoz</div>
+        <div style="font-size:16px;opacity:.75">Plan mensual</div>
+      </div>
+      <!-- 2. Aviso de pago por WhatsApp -->
+      <div class="abs" style="inset:0" data-in="6.2" data-out="11">
+        <div class="wa-head"><span>Gimnasio Fuerza Norte</span><small>avisos</small></div>
+        <div class="wa-body">
+          <div class="bubble in-msg" data-in="6.6">Hola Diego, tu plan venció el 17 nov. Renuévalo aquí y sigue entrenando: <b>$25.000</b><br><span class="f-btn" style="margin-top:8px;font-size:16px;padding:8px 14px" data-press="8.4">Pagar</span></div>
+          <div class="bubble in-msg" data-in="9.2">¡Pago recibido! Tu plan queda vigente hasta el 20 dic 💪</div>
+        </div>
+      </div>
+      <!-- 3. Reserva de clase -->
+      <div class="abs" style="inset:0;background:#F4F6FA" data-in="11">
+        <div style="padding:18px 16px 8px;font-weight:800;font-size:21px">Clases de hoy</div>
+        <div style="padding:0 16px">
+          <div class="menu-item"><div>Funcional 18:00<small>Cupo lleno</small></div><span class="chip chip-red" style="font-size:14px">20/20</span></div>
+          <div class="menu-item"><div>Spinning 19:00<small>Quedan 2 cupos</small></div><span class="f-btn swap" data-flag="12.4" style="font-size:15px;padding:8px 12px" data-press="12"><span class="sa">Reservar</span><span class="sb">Reservado ✓</span></span></div>
+          <div class="menu-item"><div>Yoga 20:00<small>Quedan 8 cupos</small></div><span class="f-btn" style="font-size:15px;padding:8px 12px;background:#fff;color:var(--ink);border:2px solid var(--ink)">Reservar</span></div>
+        </div>
+      </div>
+    </div></div>
+  </div>
+
+  <!-- Pantalla del gimnasio -->
+  <div class="abs" style="left:400px;top:70px;width:290px" data-in="0" data-out="6.2">
+    <div class="f-title up" style="font-size:30px;margin-bottom:6px" data-in="0.3">Recepción</div>
+    <p class="f-label up" style="margin:0 0 16px" data-in="0.5">Cada socio entra con su QR</p>
+    <div class="slot pop" data-in="1.6" style="display:block"><b style="width:auto">Carla M.</b> <span class="chip chip-ok" style="float:right;font-size:14px">Al día</span><br><span style="font-size:16px" class="muted">Plan vigente hasta el 12 dic</span></div>
+    <div class="slot pop" data-in="3.4" style="display:block;border-color:#F0B4AA"><b style="width:auto">Diego R.</b> <span class="chip chip-red" style="float:right;font-size:14px">Vencido</span><br><span style="font-size:16px" class="muted">Venció hace 3 días</span></div>
+    <p class="up" data-in="4.6" style="margin-top:4px"><span class="chip chip-gold">Aviso de pago enviado</span></p>
+  </div>
+  <div class="abs" style="left:400px;top:150px;width:285px" data-in="6.2" data-out="11">
+    <div class="f-title up" style="font-size:30px" data-in="6.4">Cobra sin perseguir a nadie</div>
+    <p class="f-label up" style="margin-top:14px" data-in="6.8">El aviso sale solo cuando un plan vence, y el pago queda registrado.</p>
+    <p class="up" data-in="9.4" style="margin-top:18px"><span class="chip chip-ok">Diego R. al día</span></p>
+  </div>
+  <div class="abs" style="left:400px;top:70px;width:290px" data-in="11">
+    <div class="f-title up" style="font-size:30px;margin-bottom:16px" data-in="11.1">Noviembre</div>
+    <div class="slot up" data-in="11.3" style="display:block"><span class="muted" style="font-size:16px">Spinning 19:00</span><br><b class="swap" data-flag="12.4" style="width:auto"><span class="sa">18 de 20 cupos</span><span class="sb">19 de 20 cupos</span></b></div>
+    <div class="row up" data-in="13"><span class="muted">Socios activos</span><b>142</b></div>
+    <div class="row up" data-in="13.4"><span class="muted">Vencen esta semana</span><b>9</b></div>
+    <div class="row up" data-in="13.8"><span class="muted">Ingresos</span><b data-in="13.8" data-count="3550000"></b></div>
+  </div>
+</div>
+</template>
+
 
 <script>
 // Antes y después
@@ -831,6 +892,7 @@ dialog.player::backdrop { background: rgba(6,14,34,.72); }
     impi: { title: 'Sistema de gestión', dur: 18.5, caps: [[0, 'Escribes la venta como hablas.'], [4.6, 'El sistema la registra con abono y saldo.'], [9, 'La producción avanza y el cliente recibe el aviso.'], [13.6, 'Y la contabilidad se hace sola.']] },
     web: { title: 'Sitio web', dur: 16, caps: [[0, 'Tu negocio con página propia.'], [5.4, 'Se ve bien en el celular.'], [10.2, 'Y el cliente te escribe directo a WhatsApp.']] },
     menu: { title: 'Carta digital y pedidos', dur: 18.5, caps: [[0, 'El cliente escanea el código de la mesa.'], [4.4, 'Elige desde su celular.'], [10.4, 'El pedido llega directo a la cocina o la caja.'], [14.6, 'Y el cliente ve cuándo va camino a su mesa.']] },
+    gym: { title: 'Ejemplo: sistema para gimnasios', dur: 16.5, caps: [[0, 'Cada socio entra con su código QR.'], [3.4, 'Si su plan venció, el sistema lo detecta en la entrada.'], [6.2, 'Le llega el aviso de pago por WhatsApp y paga en línea.'], [11, 'Los socios reservan su clase y tú ves cómo va el mes.']] },
     ia: { title: 'Asistente con inteligencia artificial', dur: 15, caps: [[0, 'Un cliente escribe a las 2 de la mañana.'], [3.4, 'El asistente revisa tu agenda y ofrece solo horas libres.'], [9.6, 'La reserva queda en tu agenda, sin que hagas nada.']] }
   };
   var dlg = document.getElementById('player'); if (!dlg || !dlg.showModal) return;
