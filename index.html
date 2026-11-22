@@ -197,6 +197,9 @@ p { margin: 0; }
 .steps p { margin-top: 10px; color: var(--niebla); font-size: 16px; }
 .steps .cost { color: var(--blanco); font-weight: 700; font-size: 15px; }
 .steps .cost.ok { color: #7CF0B0; }
+.step-cta { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; min-height: 44px; padding: 0 18px; border-radius: 999px; background: var(--oro); color: var(--tinta); font-weight: 800; font-size: 15px; text-decoration: none; }
+.step-cta:hover { background: var(--oro-claro); }
+.step-cta svg { width: 18px; height: 18px; }
 @media (max-width: 1000px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .steps { grid-template-columns: minmax(0, 1fr); } }
 
@@ -309,7 +312,7 @@ dialog.player { border: 1px solid rgba(255,255,255,.14); border-radius: 22px; }
           <a class="pill pill-oro" href="https://wa.me/56973020975?text=Hola%20Soltic%2C%20quiero%20conversar%20sobre%20mi%20negocio%20para%20ver%20si%20me%20pueden%20ayudar." target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Conversemos por WhatsApp</a>
           <a class="pill pill-vidrio" href="#como-trabajamos">Cómo funciona el diagnóstico</a>
         </div>
-        <p class="fine">Para pymes de cualquier rubro en Chile. La primera conversación es gratis.</p>
+        <p class="fine">Para pymes de cualquier rubro en Chile. Cuéntanos tu caso y te decimos si podemos ayudarte.</p>
       </div>
 
       <div class="obj" aria-hidden="true">
@@ -413,7 +416,7 @@ dialog.player { border: 1px solid rgba(255,255,255,.14); border-radius: 22px; }
       <h2>Primero entendemos tu negocio. Después construimos.</h2>
       <p class="lead">No te ofrecemos un producto antes de saber qué necesitas. Partimos midiendo dónde se te va el tiempo y la plata.</p>
       <ol class="steps">
-        <li><h3>Primera conversación</h3><p class="cost ok">Gratis</p><p>Nos cuentas qué hace tu negocio y qué te quita tiempo. Si podemos ayudarte, te explicamos cómo es el diagnóstico y cuánto cuesta.</p></li>
+        <li><h3>Primera conversación</h3><p>Nos cuentas qué hace tu negocio y qué te quita tiempo. Si podemos ayudarte, te explicamos cómo es el diagnóstico y cuánto cuesta.</p><a class="step-cta" href="https://wa.me/56973020975?text=Hola%20Soltic%2C%20quiero%20conversar%20sobre%20mi%20negocio%20para%20ver%20si%20me%20pueden%20ayudar." target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#wa"/></svg>Cuéntanos tu caso</a></li>
         <li><h3>Diagnóstico</h3><p class="cost">Pagas la mitad para agendar y la otra mitad el día de la presentación</p><p>Revisamos contigo cada área: ventas, atención, pedidos, inventario, cobranza y finanzas. Calculamos en pesos cuánto pierdes en cada una.</p></li>
         <li><h3>Propuesta con números</h3><p class="cost ok">Si contratas dentro de 30 días, el diagnóstico se descuenta completo</p><p>Te mostramos qué conviene resolver primero, cuánto cuesta y en cuántos meses se paga solo con lo que ahorras.</p></li>
         <li><h3>Construcción por etapas</h3><p>Partimos por lo que más ahorra, te enseñamos a usarlo y te acompañamos después. Cada etapa se paga mitad al inicio y mitad al entregar.</p></li>
